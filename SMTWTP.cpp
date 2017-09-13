@@ -4,8 +4,8 @@
 int SMTWTP::compute_cost
 ////////////////////////////////////////////////////////////////////////////
 (
- std::vector<int> solutions,
- Instance instance
+ std::vector<int> &solutions,
+ Instance &instance
 )
 {
  int cost = 0;

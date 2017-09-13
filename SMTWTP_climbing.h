@@ -32,11 +32,14 @@ class SMTWTP_climbing : public SMTWTP_simple
   std::vector<int> get_solution(Instance &instance);
 
   std::vector<int> insert_process(bool is_best,
-                                  std::vector<int> solutions);
+                                  std::vector<int> solutions,
+                                  Instance &instance);
   std::vector<int> swap_process(bool is_best,
-                                std::vector<int> solutions);
+                                std::vector<int> solutions,
+                                Instance &instance);
   std::vector<int> exchange_process(bool is_best,
-                                    std::vector<int> solutions);
+                                    std::vector<int> solutions,
+                                    Instance &instance);
 };
 
 #endif
