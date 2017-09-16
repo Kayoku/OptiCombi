@@ -7,12 +7,13 @@
 
 void usage()
 {
- std::cout << "usage: ./simple_smtwtp_main.cpp <instance_size> [first, best] [insert, swap, exchange] [rnd, edd, mdd] < <instance_file>\n";
+ std::cout << "usage: ./climbing_smtwtp_main.cpp <instance_size> [first, best] [insert, swap, exchange] [rnd, edd, mdd] < <instance_file>\n";
 }
 
 int main (int argc, char *argv[])
 {
  /******** Récupération des arguments ***********/
+
  if (argc != 5)
  {
   usage();
@@ -24,10 +25,11 @@ int main (int argc, char *argv[])
  std::string neighbour_str(argv[3]);
  std::string init_str(argv[4]);
 
- if (select_str == "first" || select_str == "best" &&
-     neighbour_str == "insert" || neighbour_str == "swap" || neighbour_str == "exchange" &&
-     init_str == "rnd" || init_str == "edd" || init_str == "mdd")
+ if (!((select_str == "first" || select_str == "best") &&
+     (neighbour_str == "insert" || neighbour_str == "swap" || neighbour_str == "exchange") &&
+     (init_str == "rnd" || init_str == "edd" || init_str == "mdd")))
  {
+  std::cout << select_str << " " << neighbour_str << " " << init_str << '\n';
   usage();
   return -1;
  }

@@ -103,7 +103,7 @@ std::vector<int> SMTWTP_climbing::insert_process
   }
  }
 
- return new_solutions;
+ return best_solution;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -115,9 +115,7 @@ std::vector<int> SMTWTP_climbing::swap_process
  Instance &instance
 )
 {
- std::vector<int> new_solutions;
-
- return new_solutions;
+ return solutions;
 } 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -129,7 +127,5 @@ std::vector<int> SMTWTP_climbing::exchange_process
  Instance &instance
 )
 {
- std::vector<int> new_solutions;
-
- return new_solutions;
+ return solutions;
 }
