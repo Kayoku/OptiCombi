@@ -7,125 +7,149 @@ std::vector<int> SMTWTP_climbing::get_solution
  Instance &instance
 )
 {
- std::vector<int> solutions;
-
+ std::vector<int> init_solution;
  switch(init)
  {
   case Init_Mode::RND:
-   solutions = random_solution(); 
+   init_solution = random_solution(); 
    break;
   case Init_Mode::EDD:
-   solutions = EDD_solution(instance);
+   init_solution = EDD_solution(instance);
    break;
   case Init_Mode::MDD:
-   solutions = MDD_solution(instance);
+   init_solution = MDD_solution(instance);
    break;
  }
 
- bool is_best = false;
- if (select == Select_Mode::BEST)
-  is_best = true;
-
+ std::vector<int> solution;
  switch(neighbour)
  {
   case Neighbour_Mode::INSERT:
-    solutions = insert_process(is_best, solutions, instance);
+    solution = insert_process(init_solution, instance); 
+    while (solution != init_solution)
+    {
+     init_solution = solution;
+     solution = insert_process(init_solution, instance); 
+    }
    break;
   case Neighbour_Mode::SWAP:
-    solutions = swap_process(is_best, solutions, instance);
+    solution = swap_process(init_solution, instance);
+    while (solution != init_solution)
+    {
+     init_solution = solution;
+     solution = swap_process(init_solution, instance);
+    }
    break;
   case Neighbour_Mode::EXCHANGE:
-    solutions = exchange_process(is_best, solutions, instance);
+    solution = exchange_process(init_solution, instance);
+    while (solution != init_solution)
+    {
+     init_solution = solution;
+     solution = exchange_process(init_solution, instance);
+    }
    break;
  }
 
- return solutions;
+ return solution;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::insert_process
+std::vector<int> SMTWTP_climbing::insert_process 
 ////////////////////////////////////////////////////////////////////////////
 (
- bool is_best,
- std::vector<int> solutions,
+ std::vector<int> solution,
  Instance &instance
 )
 {
- int best_cost = compute_cost(solutions, instance); 
- std::vector<int> best_solution = solutions;
+ int best_cost = compute_cost(solution, instance); 
+ std::vector<int> best_solution(solution);
  
- if (is_best)
+ // Pour chaque element possible
+ int i, j;
+ for (i = 0 ; i < solution.size() ; i++)
  {
-  // Pour chaque element possible
-  for (int i = 0 ; i < solutions.size() ; i++)
+  std::vector<int> new_sol(solution);
+  int erased_value = solution[i];
+  new_sol.erase(new_sol.begin()+i);
+  // Pour chaque endroit possible à l'insertion
+  for (j = 0 ; j < new_sol.size() ; j++)
   {
-   std::vector<int> new_sol = solutions;
-   int erased_value = solutions[i];
-   new_sol.erase(solutions.begin()+i);
-   std::vector<int> partial_sol;
-   // Pour chaque endroit possible à l'insertion
-   for (int j = 0 ; j < new_sol.size() ; j++)
+   std::vector<int> partial_sol(new_sol);
+   partial_sol.insert(partial_sol.begin()+j, erased_value); 
+   int new_cost = compute_cost(partial_sol, instance);
+   if (best_cost > new_cost)
    {
-    partial_sol = new_sol;
-    partial_sol.insert(partial_sol.begin()+j, erased_value); 
-    int new_cost = compute_cost(partial_sol, instance);
-    if (best_cost < new_cost)
-    {
-     best_cost = new_cost;
-     best_solution = partial_sol;
-    }
-   }
-  } 
- }
- else
- {
-  bool find_better = false;
-  // Pour chaque element possible
-  for (int i = 0 ; i < solutions.size() && !find_better ; i++)
-  {
-   std::vector<int> new_sol = solutions;
-   int erased_value = solutions[i];
-   new_sol.erase(solutions.begin()+i);
-   std::vector<int> partial_sol;
-   // Pour chaque endroit possible à l'insertion
-   for (int j = 0 ; j < new_sol.size() && !find_better ; j++)
-   {
-    partial_sol = new_sol;
-    partial_sol.insert(partial_sol.begin()+j, erased_value);
-    int new_cost = compute_cost(partial_sol, instance);
-    if (best_cost < new_cost)
-    {
-     best_cost = new_cost;
-     best_solution = partial_sol;
-     find_better = true;
-    }
+    if (select == Select_Mode::FIRST)
+     return partial_sol;
+
+    best_solution = partial_sol;
+    best_cost = new_cost;
    }
   }
  }
-
+ 
  return best_solution;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::swap_process
+std::vector<int> SMTWTP_climbing::swap_process 
 ////////////////////////////////////////////////////////////////////////////
 (
- bool is_best,
- std::vector<int> solutions,
+ std::vector<int> solution,
  Instance &instance
 )
 {
- return solutions;
+ int best_cost = compute_cost(solution, instance);
+ std::vector<int> best_solution(solution);
+
+ // Pour chaque element possible
+ for (int i = 0 ; i < solution.size() ; i++)
+ {
+  for (int j = i+1 ; j < solution.size() ; j++)
+  {
+   std::vector<int> new_sol(solution);
+   std::iter_swap(new_sol.begin()+i, new_sol.begin()+j);
+   int new_cost = compute_cost(new_sol, instance);
+   if (best_cost > new_cost)
+   {
+    if (select == Select_Mode::FIRST)
+     return new_sol;
+
+    best_solution = new_sol;
+    best_cost = new_cost;
+   } 
+  }
+ }
+
+ return best_solution;
 } 
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::exchange_process
+std::vector<int> SMTWTP_climbing::exchange_process 
 ////////////////////////////////////////////////////////////////////////////
 (
- bool is_best,
- std::vector<int> solutions,
+ std::vector<int> solution,
  Instance &instance
 )
 {
- return solutions;
+ int best_cost = compute_cost(solution, instance);
+ std::vector<int> best_solution(solution);
+
+ for (int i = 0 ; i < solution.size()-1 ; i++)
+ {
+  std::vector<int> new_sol(solution);
+  std::iter_swap(new_sol.begin()+i, new_sol.begin()+i+1);
+  int new_cost = compute_cost(new_sol, instance);
+
+  if (best_cost > new_cost)
+  {
+   if (select == Select_Mode::FIRST)
+    return new_sol;
+
+   best_solution = new_sol;
+   best_cost = new_cost;
+  }
+ }
+
+ return best_solution;
 }

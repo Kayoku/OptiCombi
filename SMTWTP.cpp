@@ -4,7 +4,7 @@
 int SMTWTP::compute_cost
 ////////////////////////////////////////////////////////////////////////////
 (
- std::vector<int> &solutions,
+ std::vector<int> solution,
  Instance &instance
 )
 {
@@ -13,9 +13,9 @@ int SMTWTP::compute_cost
 
  for (int i = 0 ; i < instance.get_instance_size() ; i++)
  {
-  date += instance.get_duration(solutions[i]);
-  cost += instance.get_weight(solutions[i]) * 
-          std::max(date - instance.get_deadline(solutions[i]), 0); 
+  date += instance.get_duration(solution[i]);
+  cost += instance.get_weight(solution[i]) * 
+          std::max(date - instance.get_deadline(solution[i]), 0); 
  }
 
  return cost;
