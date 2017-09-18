@@ -11,6 +11,8 @@ int SMTWTP::compute_cost
  int cost = 0;
  int date = 0;
 
+ compute_cpt++;
+
  for (int i = 0 ; i < instance.get_instance_size() ; i++)
  {
   date += instance.get_duration(solution[i]);

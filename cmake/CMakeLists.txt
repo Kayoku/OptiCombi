@@ -25,3 +25,13 @@ add_executable(climbing_smtwtp_main
     ../SMTWTP_simple.cpp
     ../SMTWTP_climbing.cpp
 )
+
+add_executable(climbing_one_smtwtp_main
+    ../climbing_one_smtwtp_main.cpp
+    ../InstanceGenerator.cpp
+    ../Instance.cpp
+    ../SMTWTP.cpp
+    ../SMTWTP_simple.cpp
+    ../SMTWTP_climbing.cpp
+)
+
