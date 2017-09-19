@@ -1,4 +1,5 @@
 #include "SMTWTP_climbing.h"
+#include <algorithm>
 
 ////////////////////////////////////////////////////////////////////////////
 std::vector<int> SMTWTP_climbing::get_solution
@@ -53,6 +54,19 @@ std::vector<int> SMTWTP_climbing::get_solution
  return solution;
 }
 
+void vec_erase(std::vector<int> &solution, int index)
+{
+ for (int i = index ; i < solution.size()-1 ; i++)
+  solution[i] = solution[i+1]; 
+}
+
+void vec_insert(std::vector<int> &solution, int index, int value)
+{
+ for (int i = solution.size()-1 ; i > index ; i--)
+  solution[i] = solution[i-1];
+ solution[index] = value;
+}
+
 ////////////////////////////////////////////////////////////////////////////
 std::vector<int> SMTWTP_climbing::insert_process 
 ////////////////////////////////////////////////////////////////////////////
@@ -63,31 +77,36 @@ std::vector<int> SMTWTP_climbing::insert_process
 {
  int best_cost = compute_cost(solution, instance); 
  std::vector<int> best_solution(solution);
- 
+ std::vector<int> new_sol;
+
+ std::vector<int> order;
+ for (int i = 0 ; i < solution.size() ; i++)
+  order.push_back(i); 
+ std::random_shuffle(order.begin(), order.end());
+
  // Pour chaque element possible
- int i, j;
- for (i = 0 ; i < solution.size() ; i++)
+ for (auto o : order)
  {
-  std::vector<int> new_sol(solution);
-  int erased_value = solution[i];
-  new_sol.erase(new_sol.begin()+i);
-  // Pour chaque endroit possible à l'insertion
-  for (j = 0 ; j < new_sol.size() ; j++)
+  new_sol = solution;
+  int erased_value = new_sol[o];
+  new_sol.erase(new_sol.begin()+o);
+  // Pour chaque endroit possible à l'insertion 
+  for (int j = 0 ; j < new_sol.size()-1 ; j++)
   {
-   std::vector<int> partial_sol(new_sol);
-   partial_sol.insert(partial_sol.begin()+j, erased_value); 
-   int new_cost = compute_cost(partial_sol, instance);
+   new_sol.insert(new_sol.begin()+j, erased_value); 
+   int new_cost = compute_cost(new_sol, instance);
    if (best_cost > new_cost)
    {
     if (select == Select_Mode::FIRST)
-     return partial_sol;
+     return new_sol;
 
-    best_solution = partial_sol;
+    best_solution = new_sol;
     best_cost = new_cost;
    }
+   new_sol.erase(new_sol.begin()+j);
   }
  }
- 
+
  return best_solution;
 }
 
@@ -101,14 +120,20 @@ std::vector<int> SMTWTP_climbing::swap_process
 {
  int best_cost = compute_cost(solution, instance);
  std::vector<int> best_solution(solution);
+ std::vector<int> new_sol;
+
+ std::vector<int> order;
+ for (int i = 0 ; i < solution.size() ; i++)
+  order.push_back(i); 
+ std::random_shuffle(order.begin(), order.end());
 
  // Pour chaque element possible
- for (int i = 0 ; i < solution.size() ; i++)
+ for (auto o : order)
  {
-  for (int j = i+1 ; j < solution.size() ; j++)
+  for (int j = o+1 ; j < solution.size() ; j++)
   {
-   std::vector<int> new_sol(solution);
-   std::iter_swap(new_sol.begin()+i, new_sol.begin()+j);
+   new_sol = solution;
+   std::iter_swap(new_sol.begin()+o, new_sol.begin()+j);
    int new_cost = compute_cost(new_sol, instance);
    if (best_cost > new_cost)
    {
@@ -134,11 +159,17 @@ std::vector<int> SMTWTP_climbing::exchange_process
 {
  int best_cost = compute_cost(solution, instance);
  std::vector<int> best_solution(solution);
+ std::vector<int> new_sol;
 
+ std::vector<int> order;
  for (int i = 0 ; i < solution.size()-1 ; i++)
+  order.push_back(i); 
+ std::random_shuffle(order.begin(), order.end());
+
+ for (auto o : order)
  {
-  std::vector<int> new_sol(solution);
-  std::iter_swap(new_sol.begin()+i, new_sol.begin()+i+1);
+  new_sol = solution;
+  std::iter_swap(new_sol.begin()+o, new_sol.begin()+o+1);
   int new_cost = compute_cost(new_sol, instance);
 
   if (best_cost > new_cost)

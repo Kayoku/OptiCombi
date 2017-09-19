@@ -19,7 +19,7 @@ class SMTWTP
     {}
 
   int get_instance_size() { return instance_size; }
-  int compute_cost (std::vector<int> solution,
+  int compute_cost (std::vector<int> &solution,
                     Instance &instance);
   int get_compute_cpt() { return compute_cpt; }
 };

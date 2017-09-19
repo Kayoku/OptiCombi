@@ -4,7 +4,7 @@
 int SMTWTP::compute_cost
 ////////////////////////////////////////////////////////////////////////////
 (
- std::vector<int> solution,
+ std::vector<int> &solution,
  Instance &instance
 )
 {
