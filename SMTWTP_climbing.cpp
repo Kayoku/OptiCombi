@@ -2,35 +2,23 @@
 #include <algorithm>
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::get_solution
+std::vector<int> SMTWTP_climbing::get_process
 ////////////////////////////////////////////////////////////////////////////
 (
+ std::vector<int> init_solution,
  Instance &instance
 )
 {
- std::vector<int> init_solution;
- switch(init)
- {
-  case Init_Mode::RND:
-   init_solution = random_solution(); 
-   break;
-  case Init_Mode::EDD:
-   init_solution = EDD_solution(instance);
-   break;
-  case Init_Mode::MDD:
-   init_solution = MDD_solution(instance);
-   break;
- }
-
  std::vector<int> solution;
+
  switch(neighbour)
  {
   case Neighbour_Mode::INSERT:
-    solution = insert_process(init_solution, instance); 
+    solution = insert_process(init_solution, instance);
     while (solution != init_solution)
     {
      init_solution = solution;
-     solution = insert_process(init_solution, instance); 
+     solution = insert_process(init_solution, instance);
     }
    break;
   case Neighbour_Mode::SWAP:
@@ -54,17 +42,15 @@ std::vector<int> SMTWTP_climbing::get_solution
  return solution;
 }
 
-void vec_erase(std::vector<int> &solution, int index)
+////////////////////////////////////////////////////////////////////////////
+std::vector<int> SMTWTP_climbing::get_solution
+////////////////////////////////////////////////////////////////////////////
+(
+ Instance &instance
+)
 {
- for (int i = index ; i < solution.size()-1 ; i++)
-  solution[i] = solution[i+1]; 
-}
-
-void vec_insert(std::vector<int> &solution, int index, int value)
-{
- for (int i = solution.size()-1 ; i > index ; i--)
-  solution[i] = solution[i-1];
- solution[index] = value;
+ std::vector<int> init_solution = get_initializer(instance);
+ return get_process(init_solution, instance);
 }
 
 ////////////////////////////////////////////////////////////////////////////

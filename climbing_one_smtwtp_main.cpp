@@ -3,19 +3,26 @@
 #include <chrono>
 #include <math.h>
 #include <iomanip>
+#include <map>
 
 #include "Instance.h"
 #include "InstanceGenerator.h"
 #include "SMTWTP_climbing.h"
+#include "SMTWTP_initializer.h"
+#include "SMTWTP_vnd.h"
 
+////////////////////////////////////////////////////////////////////////////
 void usage()
+////////////////////////////////////////////////////////////////////////////
 {
  std::cerr << "usage: ./climbing_one_smtwtp_main.cpp <instance_size> <instance_file> <id_instance>\n"
            << "  ex: ./climbing_one_smtwtp_main 100 ../../instances/wt100.txt 1\n"
            << "      ./climbing_one_smtwtp_main 100 ../../instances/wt100.txt 10\n";
 }
 
+////////////////////////////////////////////////////////////////////////////
 std::string which_mode(Select_Mode select, Neighbour_Mode neighbour, Init_Mode init)
+////////////////////////////////////////////////////////////////////////////
 {
  std::string s, n, i;
 
@@ -41,7 +48,34 @@ std::string which_mode(Select_Mode select, Neighbour_Mode neighbour, Init_Mode i
  return s+"-"+n+"-"+i;
 }
 
+////////////////////////////////////////////////////////////////////////////
+void display_result
+////////////////////////////////////////////////////////////////////////////
+(
+ std::string mode,
+ std::string time,
+ std::string deviation,
+ std::string cost_cpt,
+ std::string found_cost,
+ std::string has_best
+)
+{
+ std::cout << std::setw(18) << mode 
+           << "   "
+           << std::setw(14) << time
+           << "   "
+           << std::setw(14) << deviation
+           << "   "
+           << std::setw(14) << cost_cpt
+           << "   "
+           << std::setw(14) << found_cost
+           << "   "
+           << std::setw(3) << has_best 
+           << std::endl;
+}
+
 int main (int argc, char *argv[])
+////////////////////////////////////////////////////////////////////////////
 {
  /******** Récupération des arguments ***********/
 
@@ -54,6 +88,12 @@ int main (int argc, char *argv[])
  int instance_size = std::stoi(argv[1]);
  std::string instance_file(argv[2]);
  int id_instance = std::stoi(argv[3]);
+ int nb_while = 30;
+ float time_inter = 0.0;
+ float deviation_inter = 0.0;
+ float cost_cpt_inter = 0.0;
+ float found_cost_inter = 0.0;
+ bool has_best_inter = false;
 
  /************** Main Program *************/
 
@@ -100,15 +140,67 @@ int main (int argc, char *argv[])
 
  std::cout << "id: " << inst.get_id() << '\n';
  std::cout << "best result: " << best_cost[inst.get_id()-1] << '\n';
- std::cout << std::setw(18) << "mode" 
-           << "   "
-           << std::setw(10) << "time (us)"
-           << "   "
-           << std::setw(10) << "deviation"
-           << "   "
-           << std::setw(10) << "cost cpt"
-           << "   "
-           << std::setw(10) << "found cost" << std::endl;
+ display_result("Mode", "Time (us)", "Deviation", "Cost cpt", "Found cost", "Best");
+
+ /* Basic Algos */
+
+ {
+  std::map<Init_Mode, std::string> mode_str =
+  {
+   {Init_Mode::RND, "basic rnd"},
+   {Init_Mode::EDD, "basic edd"},
+   {Init_Mode::MDD, "basic mdd"}
+  };
+
+  for (auto init : inits)
+  {
+   time_inter = 0;
+   deviation_inter = 0;
+   cost_cpt_inter = 0;
+   found_cost_inter = 0;
+
+   for (int i = 0 ; i < nb_while ; i++)
+   {
+    float deviation = 0.0;
+    int time = 0;
+    int cost = 0;
+    std::chrono::high_resolution_clock::time_point t1;
+    std::chrono::high_resolution_clock::time_point t2;
+    std::vector<int> solution;
+  
+    SMTWTP_initializer problems(instance_size, init);
+  
+    t1 = std::chrono::high_resolution_clock::now();
+    if (init == Init_Mode::RND)
+     solution = problems.random_solution();
+    else if (init == Init_Mode::EDD)
+     solution = problems.EDD_solution(inst);
+    else
+     solution = problems.MDD_solution(inst);
+    t2 = std::chrono::high_resolution_clock::now();
+    
+    time = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count();
+    cost = problems.compute_cost(solution, inst);
+    deviation = ((float)cost - (float)best_cost[inst.get_id()-1]) / 100.0;
+ 
+    time_inter += time;
+    deviation_inter += deviation;
+    cost_cpt_inter += problems.get_compute_cpt();
+    found_cost_inter += cost;
+    if (deviation == 0)
+     has_best_inter = true;
+   }
+ 
+   display_result(mode_str[init],
+                  std::to_string(time_inter/nb_while),
+                  std::to_string(deviation_inter/nb_while),
+                  std::to_string(cost_cpt_inter/nb_while),
+                  std::to_string(found_cost_inter/nb_while),
+                  std::string((has_best_inter) ? "Y" : "N"));
+  }
+ }
+
+ /* 18 Algos  */
 
  for (auto select : selects)
  {
@@ -116,37 +208,99 @@ int main (int argc, char *argv[])
   {
    for (auto init : inits)
    {
-    SMTWTP_climbing problems(instance_size, select, neighbour, init);
+    time_inter = 0; 
+    deviation_inter = 0;
+    cost_cpt_inter = 0;
+    found_cost_inter = 0;
+    has_best_inter = false;
+
+    for (int i = 0 ; i < nb_while ; i++)
+    {
+     SMTWTP_climbing problems(instance_size, select, neighbour, init);
+     
+     float time = 0.0;
+     float deviation = 0.0;
     
-    int time_solution = 0.0;
-    float deviation_solution = 0.0;
-   
-    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now(); 
-    auto solution = problems.get_solution(inst);
-    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-   
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-    time_solution = duration;
-   
-    int current_cost = problems.compute_cost(solution, inst);
-    int current_best = best_cost[inst.get_id()-1];
-   
-    deviation_solution = ((float)current_cost - (float)current_best) / 100.0;
-   
-    // Affiche les résultats
-    std::cout << std::setw(18) << which_mode(select, neighbour, init)
-              << "   "
-              << std::setw(10) << time_solution
-              << "   "
-              << std::setw(10) << deviation_solution
-              << "   "
-              << std::setw(10) << problems.get_compute_cpt()
-              << "   " 
-              << std::setw(10) << current_cost
-              << (deviation_solution == 0 ? " Y" : " N") << std::endl;
+     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now(); 
+     auto solution = problems.get_solution(inst);
+     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    
+     time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    
+     int cost = problems.compute_cost(solution, inst);
+     int current_best = best_cost[inst.get_id()-1];
+    
+     deviation = ((float)cost - (float)current_best) / 100.0;
+
+     time_inter += time;
+     deviation_inter += deviation;
+     cost_cpt_inter += problems.get_compute_cpt();
+     found_cost_inter += cost;
+     if (deviation == 0)
+      has_best_inter = true;
+    }
+    display_result(which_mode(select, neighbour, init),
+                   std::to_string(time_inter/nb_while),
+                   std::to_string(deviation_inter/nb_while),
+                   std::to_string(cost_cpt_inter/nb_while),
+                   std::to_string(found_cost_inter/nb_while),
+                   std::string((has_best_inter) ? "Y" : "N"));
    }
   }
  }
-   
+
+ /* VND  */ 
+
+ Init_Mode init = Init_Mode::MDD;
+ time_inter = 0; 
+ deviation_inter = 0;
+ cost_cpt_inter = 0;
+ found_cost_inter = 0;
+ has_best_inter = false;
+
+ std::vector<Config_VND> configs1 =
+ {
+  Config_VND(Select_Mode::FIRST,
+             Neighbour_Mode::EXCHANGE),
+  Config_VND(Select_Mode::FIRST,
+             Neighbour_Mode::SWAP),
+  Config_VND(Select_Mode::FIRST,
+             Neighbour_Mode::INSERT)
+ };
+
+ for (int i = 0 ; i < nb_while ; i++)
+ {
+  SMTWTP_vnd problems(instance_size, init, configs1);
+ 
+  float time = 0.0;
+  float deviation = 0.0;
+
+  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+  auto solution = problems.get_solution(inst);
+  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+
+  time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+  int cost = problems.compute_cost(solution, inst);
+  int current_best = best_cost[inst.get_id()-1];
+
+  deviation = ((float)cost - (float)current_best) / 100.0;
+
+  time_inter += time;
+  deviation_inter += deviation;
+  cost_cpt_inter += problems.get_full_compute_cpt();
+  found_cost_inter += cost;
+  if (deviation == 0)
+   has_best_inter = true;
+ }
+
+ // Affiche les résultats
+ display_result("test",
+                std::to_string(time_inter/nb_while),
+                std::to_string(deviation_inter/nb_while),
+                std::to_string(cost_cpt_inter/nb_while),
+                std::to_string(found_cost_inter/nb_while),
+                std::string((has_best_inter) ? "Y" : "N"));
+
  return 0;
 }

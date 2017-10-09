@@ -10,20 +10,12 @@ include_directories(
     ../
 )
 
-add_executable(simple_smtwtp_main 
-    ../simple_smtwtp_main.cpp
-    ../InstanceGenerator.cpp
-    ../Instance.cpp
-    ../SMTWTP.cpp
-    ../SMTWTP_simple.cpp
-)
-
 add_executable(climbing_smtwtp_main
     ../climbing_smtwtp_main.cpp
     ../InstanceGenerator.cpp
     ../Instance.cpp
     ../SMTWTP.cpp
-    ../SMTWTP_simple.cpp
+    ../SMTWTP_initializer.cpp
     ../SMTWTP_climbing.cpp
 )
 
@@ -32,7 +24,7 @@ add_executable(climbing_one_smtwtp_main
     ../InstanceGenerator.cpp
     ../Instance.cpp
     ../SMTWTP.cpp
-    ../SMTWTP_simple.cpp
+    ../SMTWTP_initializer.cpp
+    ../SMTWTP_vnd.cpp
     ../SMTWTP_climbing.cpp
 )
-
