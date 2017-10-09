@@ -251,56 +251,74 @@ int main (int argc, char *argv[])
 
  /* VND  */ 
 
- Init_Mode init = Init_Mode::MDD;
- time_inter = 0; 
- deviation_inter = 0;
- cost_cpt_inter = 0;
- found_cost_inter = 0;
- has_best_inter = false;
-
- std::vector<Config_VND> configs1 =
+ std::vector<std::vector<Config_VND>> configs =
  {
-  Config_VND(Select_Mode::FIRST,
-             Neighbour_Mode::EXCHANGE),
-  Config_VND(Select_Mode::FIRST,
-             Neighbour_Mode::SWAP),
-  Config_VND(Select_Mode::FIRST,
-             Neighbour_Mode::INSERT)
+  {
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::EXCHANGE),
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::SWAP),
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::INSERT)
+  },
+  {
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::EXCHANGE),
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::INSERT),
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::SWAP)
+  }
  };
 
- for (int i = 0 ; i < nb_while ; i++)
+ for (auto conf : configs)
  {
-  SMTWTP_vnd problems(instance_size, init, configs1);
- 
-  float time = 0.0;
-  float deviation = 0.0;
+  Init_Mode init = Init_Mode::MDD;
+  time_inter = 0;
+  deviation_inter = 0;
+  cost_cpt_inter = 0;
+  found_cost_inter = 0;
+  has_best_inter = false;
 
-  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-  auto solution = problems.get_solution(inst);
-  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+  for (int i = 0 ; i < nb_while ; i++)
+  {
+   SMTWTP_vnd problems(instance_size, init, conf);
+  
+   float time = 0.0;
+   float deviation = 0.0;
 
-  time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+   std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+   auto solution = problems.get_solution(inst);
+   std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 
-  int cost = problems.compute_cost(solution, inst);
-  int current_best = best_cost[inst.get_id()-1];
+   time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
-  deviation = ((float)cost - (float)current_best) / 100.0;
+   int cost = problems.compute_cost(solution, inst);
+   int current_best = best_cost[inst.get_id()-1];
 
-  time_inter += time;
-  deviation_inter += deviation;
-  cost_cpt_inter += problems.get_full_compute_cpt();
-  found_cost_inter += cost;
-  if (deviation == 0)
-   has_best_inter = true;
+   deviation = ((float)cost - (float)current_best) / 100.0;
+
+   time_inter += time;
+   deviation_inter += deviation;
+   cost_cpt_inter += problems.get_full_compute_cpt();
+   found_cost_inter += cost;
+   if (deviation == 0)
+    has_best_inter = true;
+  }
+
+  std::string vnd_string;
+  for (auto v : conf)
+   vnd_string += v.get_title() + "-";
+  vnd_string.pop_back();
+
+  // Affiche les résultats
+  display_result(vnd_string,
+                 std::to_string(time_inter/nb_while),
+                 std::to_string(deviation_inter/nb_while),
+                 std::to_string(cost_cpt_inter/nb_while),
+                 std::to_string(found_cost_inter/nb_while),
+                 std::string((has_best_inter) ? "Y" : "N"));
  }
-
- // Affiche les résultats
- display_result("test",
-                std::to_string(time_inter/nb_while),
-                std::to_string(deviation_inter/nb_while),
-                std::to_string(cost_cpt_inter/nb_while),
-                std::to_string(found_cost_inter/nb_while),
-                std::string((has_best_inter) ? "Y" : "N"));
 
  return 0;
 }

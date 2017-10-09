@@ -18,6 +18,24 @@ struct Config_VND
   select(select),
   neighbour(neighbour)
  {}
+
+ std::string get_title()
+ {
+  std::string title;
+  if (select == Select_Mode::FIRST)
+    title += "F";
+  else
+    title += "B";
+
+  if (neighbour == Neighbour_Mode::INSERT)
+    title += "I";
+  else if (neighbour == Neighbour_Mode::SWAP)
+    title += "S";
+  else
+    title += "E";
+
+  return title;
+ }
 };
 
 class SMTWTP_vnd : public SMTWTP_initializer
