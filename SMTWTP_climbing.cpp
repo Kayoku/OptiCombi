@@ -2,14 +2,14 @@
 #include <algorithm>
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::get_process
+std::vector<long> SMTWTP_climbing::get_process
 ////////////////////////////////////////////////////////////////////////////
 (
- std::vector<int> init_solution,
+ std::vector<long> init_solution,
  Instance &instance
 )
 {
- std::vector<int> solution;
+ std::vector<long> solution;
 
  switch(neighbour)
  {
@@ -43,29 +43,29 @@ std::vector<int> SMTWTP_climbing::get_process
 }
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::get_solution
+std::vector<long> SMTWTP_climbing::get_solution
 ////////////////////////////////////////////////////////////////////////////
 (
  Instance &instance
 )
 {
- std::vector<int> init_solution = get_initializer(instance);
+ std::vector<long> init_solution = get_initializer(instance);
  return get_process(init_solution, instance);
 }
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::insert_process 
+std::vector<long> SMTWTP_climbing::insert_process 
 ////////////////////////////////////////////////////////////////////////////
 (
- std::vector<int> solution,
+ std::vector<long> solution,
  Instance &instance
 )
 {
- int best_cost = compute_cost(solution, instance); 
- std::vector<int> best_solution(solution);
- std::vector<int> new_sol;
+ long best_cost = compute_cost(solution, instance); 
+ std::vector<long> best_solution(solution);
+ std::vector<long> new_sol;
 
- std::vector<int> order;
+ std::vector<long> order;
  for (int i = 0 ; i < solution.size() ; i++)
   order.push_back(i); 
  std::random_shuffle(order.begin(), order.end());
@@ -74,13 +74,13 @@ std::vector<int> SMTWTP_climbing::insert_process
  for (auto o : order)
  {
   new_sol = solution;
-  int erased_value = new_sol[o];
+  long erased_value = new_sol[o];
   new_sol.erase(new_sol.begin()+o);
   // Pour chaque endroit possible à l'insertion 
   for (int j = 0 ; j < new_sol.size()-1 ; j++)
   {
    new_sol.insert(new_sol.begin()+j, erased_value); 
-   int new_cost = compute_cost(new_sol, instance);
+   long new_cost = compute_cost(new_sol, instance);
    if (best_cost > new_cost)
    {
     if (select == Select_Mode::FIRST)
@@ -97,18 +97,18 @@ std::vector<int> SMTWTP_climbing::insert_process
 }
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::swap_process 
+std::vector<long> SMTWTP_climbing::swap_process 
 ////////////////////////////////////////////////////////////////////////////
 (
- std::vector<int> solution,
+ std::vector<long> solution,
  Instance &instance
 )
 {
- int best_cost = compute_cost(solution, instance);
- std::vector<int> best_solution(solution);
- std::vector<int> new_sol;
+ long best_cost = compute_cost(solution, instance);
+ std::vector<long> best_solution(solution);
+ std::vector<long> new_sol;
 
- std::vector<int> order;
+ std::vector<long> order;
  for (int i = 0 ; i < solution.size() ; i++)
   order.push_back(i); 
  std::random_shuffle(order.begin(), order.end());
@@ -120,7 +120,7 @@ std::vector<int> SMTWTP_climbing::swap_process
   {
    new_sol = solution;
    std::iter_swap(new_sol.begin()+o, new_sol.begin()+j);
-   int new_cost = compute_cost(new_sol, instance);
+   long new_cost = compute_cost(new_sol, instance);
    if (best_cost > new_cost)
    {
     if (select == Select_Mode::FIRST)
@@ -136,18 +136,18 @@ std::vector<int> SMTWTP_climbing::swap_process
 } 
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_climbing::exchange_process 
+std::vector<long> SMTWTP_climbing::exchange_process 
 ////////////////////////////////////////////////////////////////////////////
 (
- std::vector<int> solution,
+ std::vector<long> solution,
  Instance &instance
 )
 {
- int best_cost = compute_cost(solution, instance);
- std::vector<int> best_solution(solution);
- std::vector<int> new_sol;
+ long best_cost = compute_cost(solution, instance);
+ std::vector<long> best_solution(solution);
+ std::vector<long> new_sol;
 
- std::vector<int> order;
+ std::vector<long> order;
  for (int i = 0 ; i < solution.size()-1 ; i++)
   order.push_back(i); 
  std::random_shuffle(order.begin(), order.end());
@@ -156,7 +156,7 @@ std::vector<int> SMTWTP_climbing::exchange_process
  {
   new_sol = solution;
   std::iter_swap(new_sol.begin()+o, new_sol.begin()+o+1);
-  int new_cost = compute_cost(new_sol, instance);
+  long new_cost = compute_cost(new_sol, instance);
 
   if (best_cost > new_cost)
   {

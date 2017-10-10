@@ -22,13 +22,13 @@ class SMTWTP_initializer: public SMTWTP
      init(init) 
     {}
   
-  std::vector<int> get_initializer(Instance &instance);
+  std::vector<long> get_initializer(Instance &instance);
 
-  std::vector<int> random_solution();
-  std::vector<int> EDD_solution(Instance &instance);
-  std::vector<int> MDD_solution(Instance &instance);
+  std::vector<long> random_solution();
+  std::vector<long> EDD_solution(Instance &instance);
+  std::vector<long> MDD_solution(Instance &instance);
 
-  std::vector<int> get_solution(Instance &instance) override;
+  std::vector<long> get_solution(Instance &instance) override;
 };
 
 #endif

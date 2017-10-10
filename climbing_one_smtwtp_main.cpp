@@ -1,4 +1,6 @@
 #include <iostream>
+#include <ostream>
+#include <sstream>
 #include <fstream>
 #include <chrono>
 #include <math.h>
@@ -6,7 +8,8 @@
 #include <map>
 
 #include "Instance.h"
-#include "InstanceGenerator.h"
+#include "InstanceGenerator100.h"
+#include "InstanceGenerator1000.h"
 #include "SMTWTP_climbing.h"
 #include "SMTWTP_initializer.h"
 #include "SMTWTP_vnd.h"
@@ -49,6 +52,15 @@ std::string which_mode(Select_Mode select, Neighbour_Mode neighbour, Init_Mode i
 }
 
 ////////////////////////////////////////////////////////////////////////////
+std::string float_to_string(float f)
+////////////////////////////////////////////////////////////////////////////
+{
+ std::ostringstream s;
+ s << std::fixed << std::setprecision(2) << f;
+ return s.str();
+}
+
+////////////////////////////////////////////////////////////////////////////
 void display_result
 ////////////////////////////////////////////////////////////////////////////
 (
@@ -62,7 +74,7 @@ void display_result
 {
  std::cout << std::setw(18) << mode 
            << "   "
-           << std::setw(14) << time
+           << std::setw(14) << std::fixed << std::setprecision(2) << time
            << "   "
            << std::setw(14) << deviation
            << "   "
@@ -88,7 +100,7 @@ int main (int argc, char *argv[])
  int instance_size = std::stoi(argv[1]);
  std::string instance_file(argv[2]);
  int id_instance = std::stoi(argv[3]);
- int nb_while = 30;
+ int nb_while = 1;
  float time_inter = 0.0;
  float deviation_inter = 0.0;
  float cost_cpt_inter = 0.0;
@@ -97,9 +109,9 @@ int main (int argc, char *argv[])
 
  /************** Main Program *************/
 
- std::vector<int> best_cost;
+ std::vector<long> best_cost;
 
- std::ifstream best_file("../../instances/wtbest100b.txt");
+/* std::ifstream best_file("../../instances/wtbest100b.txt");
  if (!best_file.is_open())
  {
   std::cerr << "Fichier des optimaux non trouvé.\n";
@@ -126,7 +138,21 @@ int main (int argc, char *argv[])
  {
   std::cerr << "Pas d'instance à cette id.\n";
   return -1;
+ }*/
+
+ std::ifstream best_file("../../instances/optimal_results.txt");
+ if (!best_file.is_open())
+ {
+  std::cerr << "Fichier non trouvé.\n";
+  return -1;
  }
+
+ long inter;
+ while (best_file >> inter)
+  best_cost.push_back(inter);
+
+ InstanceGenerator1000 generator({"../../instances/wt_1000_1.txt"});
+ Instance inst = generator.get_new_instance(instance_size);
 
  // Pour les 18 Algos possibles, on fait
  std::vector<Select_Mode> selects = {Select_Mode::FIRST,
@@ -163,10 +189,10 @@ int main (int argc, char *argv[])
    {
     float deviation = 0.0;
     int time = 0;
-    int cost = 0;
+    long cost = 0;
     std::chrono::high_resolution_clock::time_point t1;
     std::chrono::high_resolution_clock::time_point t2;
-    std::vector<int> solution;
+    std::vector<long> solution;
   
     SMTWTP_initializer problems(instance_size, init);
   
@@ -181,7 +207,7 @@ int main (int argc, char *argv[])
     
     time = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count();
     cost = problems.compute_cost(solution, inst);
-    deviation = ((float)cost - (float)best_cost[inst.get_id()-1]) / 100.0;
+    deviation = ((float)cost - (float)best_cost[inst.get_id()-1]) / (float)instance_size;
  
     time_inter += time;
     deviation_inter += deviation;
@@ -192,10 +218,10 @@ int main (int argc, char *argv[])
    }
  
    display_result(mode_str[init],
-                  std::to_string(time_inter/nb_while),
-                  std::to_string(deviation_inter/nb_while),
-                  std::to_string(cost_cpt_inter/nb_while),
-                  std::to_string(found_cost_inter/nb_while),
+                  float_to_string(time_inter/nb_while),
+                  float_to_string(deviation_inter/nb_while),
+                  float_to_string(cost_cpt_inter/nb_while),
+                  float_to_string(found_cost_inter/nb_while),
                   std::string((has_best_inter) ? "Y" : "N"));
   }
  }
@@ -227,10 +253,10 @@ int main (int argc, char *argv[])
     
      time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
     
-     int cost = problems.compute_cost(solution, inst);
-     int current_best = best_cost[inst.get_id()-1];
+     long cost = problems.compute_cost(solution, inst);
+     long current_best = best_cost[inst.get_id()-1];
     
-     deviation = ((float)cost - (float)current_best) / 100.0;
+     deviation = ((float)cost - (float)current_best) / (float)instance_size;
 
      time_inter += time;
      deviation_inter += deviation;
@@ -240,10 +266,10 @@ int main (int argc, char *argv[])
       has_best_inter = true;
     }
     display_result(which_mode(select, neighbour, init),
-                   std::to_string(time_inter/nb_while),
-                   std::to_string(deviation_inter/nb_while),
-                   std::to_string(cost_cpt_inter/nb_while),
-                   std::to_string(found_cost_inter/nb_while),
+                   float_to_string(time_inter/nb_while),
+                   float_to_string(deviation_inter/nb_while),
+                   float_to_string(cost_cpt_inter/nb_while),
+                   float_to_string(found_cost_inter/nb_while),
                    std::string((has_best_inter) ? "Y" : "N"));
    }
   }
@@ -293,10 +319,10 @@ int main (int argc, char *argv[])
 
    time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
-   int cost = problems.compute_cost(solution, inst);
-   int current_best = best_cost[inst.get_id()-1];
+   long cost = problems.compute_cost(solution, inst);
+   long current_best = best_cost[inst.get_id()-1];
 
-   deviation = ((float)cost - (float)current_best) / 100.0;
+   deviation = ((float)cost - (float)current_best) / (float)instance_size;
 
    time_inter += time;
    deviation_inter += deviation;
@@ -313,10 +339,10 @@ int main (int argc, char *argv[])
 
   // Affiche les résultats
   display_result(vnd_string,
-                 std::to_string(time_inter/nb_while),
-                 std::to_string(deviation_inter/nb_while),
-                 std::to_string(cost_cpt_inter/nb_while),
-                 std::to_string(found_cost_inter/nb_while),
+                 float_to_string(time_inter/nb_while),
+                 float_to_string(deviation_inter/nb_while),
+                 float_to_string(cost_cpt_inter/nb_while),
+                 float_to_string(found_cost_inter/nb_while),
                  std::string((has_best_inter) ? "Y" : "N"));
  }
 

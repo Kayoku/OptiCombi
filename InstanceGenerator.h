@@ -1,5 +1,5 @@
 #ifndef INSTANCE_GENERATOR_DEFINE
-#define INSTANCE_GENERATOR_DEFINe
+#define INSTANCE_GENERATOR_DEFINE
 
 #include <iostream>
 #include <fstream>
@@ -8,18 +8,16 @@
 
 class InstanceGenerator
 {
- private:
-  std::istream &file;
+ protected:
   int cpt_instance;
 
  public:
-  InstanceGenerator(std::istream &file):
-      file(file),
+  InstanceGenerator():
       cpt_instance(0)
    {}  
 
-  Instance get_new_instance(int instance_size);
-  bool previous_good();
+  virtual Instance get_new_instance(int instance_size) = 0;
+  virtual bool previous_good() = 0;
 };
 
 #endif

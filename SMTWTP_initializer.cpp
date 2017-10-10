@@ -2,13 +2,13 @@
 #include <algorithm>
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_initializer::get_initializer
+std::vector<long> SMTWTP_initializer::get_initializer
 ////////////////////////////////////////////////////////////////////////////
 (
  Instance &instance
 )
 {
- std::vector<int> init_solution;
+ std::vector<long> init_solution;
 
  switch(init)
  {
@@ -31,10 +31,10 @@ std::vector<int> SMTWTP_initializer::get_initializer
 // Valeur = Numéro de l'instance
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_initializer::random_solution()
+std::vector<long> SMTWTP_initializer::random_solution()
 ////////////////////////////////////////////////////////////////////////////
 {
- std::vector<int> solutions;
+ std::vector<long> solutions;
 
  for (int i = 0 ; i < get_instance_size() ; i++)
   solutions.push_back(i);
@@ -48,22 +48,22 @@ std::vector<int> SMTWTP_initializer::random_solution()
 }
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_initializer::EDD_solution
+std::vector<long> SMTWTP_initializer::EDD_solution
 ////////////////////////////////////////////////////////////////////////////
 (
  Instance &instance
 )
 {
- std::vector<int> solutions;
- std::vector<std::pair<int, int>> sol_and_deadline;
+ std::vector<long> solutions;
+ std::vector<std::pair<long, long>> sol_and_deadline;
 
  for (int i = 0 ; i < get_instance_size() ; i++)
-  sol_and_deadline.push_back(std::pair<int, int>(i, instance.get_deadline(i)));
+  sol_and_deadline.push_back(std::pair<long, long>(i, instance.get_deadline(i)));
  
  // tri croissant
  std::sort(sol_and_deadline.begin(),
            sol_and_deadline.end(),
-           [](std::pair<int, int> &p1, std::pair<int, int> &p2)
+           [](std::pair<long, long> &p1, std::pair<long, long> &p2)
              { return p1.second < p2.second; });
  
  for (int i = 0 ; i < get_instance_size() ; i++)
@@ -73,15 +73,15 @@ std::vector<int> SMTWTP_initializer::EDD_solution
 }
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_initializer::MDD_solution
+std::vector<long> SMTWTP_initializer::MDD_solution
 ////////////////////////////////////////////////////////////////////////////
 (
  Instance &instance
 )
 {
- std::vector<int> solutions;
- std::vector<int> removable;
- int current_date = 0;
+ std::vector<long> solutions;
+ std::vector<long> removable;
+ long current_date = 0;
 
  // Ajout des indexs
  for (int i = 0 ; i < get_instance_size() ; i++)
@@ -90,11 +90,11 @@ std::vector<int> SMTWTP_initializer::MDD_solution
  // Algo MDD
  for (int i = 0 ; i < get_instance_size() ; i++)
  {
-  std::vector<std::pair<int, int>> mdd_values;
+  std::vector<std::pair<long, long>> mdd_values;
 
   // On recalcule pour les index restants, le MDD
   for (auto index: removable)
-   mdd_values.push_back(std::pair<int, int>
+   mdd_values.push_back(std::pair<long, long>
                             (index,
                              std::max((current_date +
                                      instance.get_duration(index)),
@@ -103,7 +103,7 @@ std::vector<int> SMTWTP_initializer::MDD_solution
   // On trie par ordre croissant
   std::sort(mdd_values.begin(),
             mdd_values.end(),
-            [](std::pair<int, int> &p1, std::pair<int, int> &p2)
+            [](std::pair<long, long> &p1, std::pair<long, long> &p2)
               { return p1.second < p2.second; });
 
   // On ajoute le premier et on fait les modifications générales
@@ -119,7 +119,7 @@ std::vector<int> SMTWTP_initializer::MDD_solution
 }
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<int> SMTWTP_initializer::get_solution
+std::vector<long> SMTWTP_initializer::get_solution
 ////////////////////////////////////////////////////////////////////////////
 (
  Instance &instance

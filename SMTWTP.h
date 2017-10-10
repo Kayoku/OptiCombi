@@ -21,10 +21,10 @@ class SMTWTP
   int get_instance_size() { return instance_size; }
   int get_compute_cpt() { return compute_cpt; }
 
-  int compute_cost (std::vector<int> &solution,
+  long compute_cost (std::vector<long> &solution,
                     Instance &instance);
 
-  virtual std::vector<int> get_solution(Instance &instance) = 0;
+  virtual std::vector<long> get_solution(Instance &instance) = 0;
 };
 
 #endif

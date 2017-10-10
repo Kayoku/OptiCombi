@@ -53,7 +53,7 @@ class SMTWTP_vnd : public SMTWTP_initializer
       vnd.push_back(SMTWTP_climbing(instance_size, conf.select, conf.neighbour, init));
     }
 
-  std::vector<int> get_solution(Instance &instance) override;
+  std::vector<long> get_solution(Instance &instance) override;
 
   int get_full_compute_cpt();
 };

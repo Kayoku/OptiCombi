@@ -1,15 +1,15 @@
-#include "InstanceGenerator.h"
+#include "InstanceGenerator100.h"
 
 ////////////////////////////////////////////////////////////////////////////
-Instance InstanceGenerator::get_new_instance(int instance_size)
+Instance InstanceGenerator100::get_new_instance(int instance_size)
 ////////////////////////////////////////////////////////////////////////////
 {
- int inter;
+ long inter;
  cpt_instance++;
 
- std::vector<int> durations;
- std::vector<int> weights;
- std::vector<int> deadlines;
+ std::vector<long> durations;
+ std::vector<long> weights;
+ std::vector<long> deadlines;
  
  for (int i = 0 ; i < instance_size ; i++)
  {
@@ -34,7 +34,7 @@ Instance InstanceGenerator::get_new_instance(int instance_size)
 }
 
 ////////////////////////////////////////////////////////////////////////////
-bool InstanceGenerator::previous_good()
+bool InstanceGenerator100::previous_good()
 ////////////////////////////////////////////////////////////////////////////
 {
  if (file.eof())

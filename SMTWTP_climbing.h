@@ -13,11 +13,11 @@ class SMTWTP_climbing : public SMTWTP_initializer
   Select_Mode select;
   Neighbour_Mode neighbour;
 
-  std::vector<int> insert_process(std::vector<int> solution,
+  std::vector<long> insert_process(std::vector<long> solution,
                                   Instance &instance);
-  std::vector<int> swap_process(std::vector<int> solution,
+  std::vector<long> swap_process(std::vector<long> solution,
                                 Instance &instance);
-  std::vector<int> exchange_process(std::vector<int> solution,
+  std::vector<long> exchange_process(std::vector<long> solution,
                                     Instance &instance);
 
  public:
@@ -30,9 +30,9 @@ class SMTWTP_climbing : public SMTWTP_initializer
      neighbour(neighbour)
     {}
 
-  std::vector<int> get_process(std::vector<int> init_solution,
+  std::vector<long> get_process(std::vector<long> init_solution,
                                Instance &instance);
-  std::vector<int> get_solution(Instance &instance) override;
+  std::vector<long> get_solution(Instance &instance) override;
 };
 
 #endif

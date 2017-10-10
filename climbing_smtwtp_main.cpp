@@ -4,7 +4,7 @@
 #include <math.h>
 
 #include "Instance.h"
-#include "InstanceGenerator.h"
+#include "InstanceGenerator100.h"
 #include "SMTWTP_climbing.h"
 
 void usage()
@@ -100,7 +100,7 @@ int main (int argc, char *argv[])
    return -1;
   }
  
-  InstanceGenerator generator(file);
+  InstanceGenerator100 generator(file);
 
   while(true)
   {
