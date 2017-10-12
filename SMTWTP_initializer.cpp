@@ -127,3 +127,15 @@ std::vector<long> SMTWTP_initializer::get_solution
 {
  return get_initializer(instance);
 }
+
+////////////////////////////////////////////////////////////////////////////
+std::string SMTWTP_initializer::get_name()
+////////////////////////////////////////////////////////////////////////////
+{
+ if (init == Init_Mode::RND)
+  return "basic rnd";
+ else if (init == Init_Mode::EDD)
+  return "basic edd";
+ else
+  return "basic mdd";
+}

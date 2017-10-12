@@ -15,7 +15,18 @@ class InstanceGenerator1000 : public InstanceGenerator
   InstanceGenerator1000(std::vector<std::string> files):
     files(files),
     InstanceGenerator()
-   {}  
+   {
+    std::ifstream best_file("../../instances/optimal_results.txt");
+    if (!best_file.is_open())
+    {
+     std::cerr << "Fichier des optimaux non trouvé." << std::endl;
+     exit(-1);
+    }
+
+    long inter = 0;
+    while (best_file >> inter)
+     best_sol.push_back(inter);
+   }  
 
   Instance get_new_instance(int instance_size) override;
   bool previous_good() override;

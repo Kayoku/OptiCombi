@@ -8,7 +8,7 @@
 
 class SMTWTP
 {
- private:
+ protected:
   int instance_size;
   int compute_cpt;
 
@@ -19,12 +19,13 @@ class SMTWTP
     {}
 
   int get_instance_size() { return instance_size; }
-  int get_compute_cpt() { return compute_cpt; }
+  int get_compute_cpt();
 
   long compute_cost (std::vector<long> &solution,
                     Instance &instance);
 
   virtual std::vector<long> get_solution(Instance &instance) = 0;
+  virtual std::string get_name() = 0;
 };
 
 #endif

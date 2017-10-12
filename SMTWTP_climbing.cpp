@@ -170,3 +170,31 @@ std::vector<long> SMTWTP_climbing::exchange_process
 
  return best_solution;
 }
+
+////////////////////////////////////////////////////////////////////////////
+std::string SMTWTP_climbing::get_name()
+////////////////////////////////////////////////////////////////////////////
+{
+ std::string s, n, i;
+
+ if (Select_Mode::FIRST == select)
+  s = "f";
+ else
+  s = "b";
+
+ if (Neighbour_Mode::INSERT == neighbour)
+  n = "i";
+ else if (Neighbour_Mode::SWAP == neighbour)
+  n = "s";
+ else
+  n = "e";
+
+ if (Init_Mode::RND == init)
+  i = "r";
+ else if (Init_Mode::EDD == init)
+  i = "e";
+ else
+  i = "m";
+
+ return i+s+n;
+}

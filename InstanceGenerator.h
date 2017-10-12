@@ -10,6 +10,7 @@ class InstanceGenerator
 {
  protected:
   int cpt_instance;
+  std::vector<long> best_sol;
 
  public:
   InstanceGenerator():

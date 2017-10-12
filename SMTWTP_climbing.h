@@ -32,7 +32,9 @@ class SMTWTP_climbing : public SMTWTP_initializer
 
   std::vector<long> get_process(std::vector<long> init_solution,
                                Instance &instance);
+
   std::vector<long> get_solution(Instance &instance) override;
+  std::string get_name() override;
 };
 
 #endif

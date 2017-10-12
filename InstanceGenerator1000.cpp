@@ -36,7 +36,7 @@ Instance InstanceGenerator1000::get_new_instance(int instance_size)
   deadlines.push_back(inter);
  }
  
- Instance inst(cpt_instance, instance_size, durations, weights, deadlines);
+ Instance inst(cpt_instance, instance_size, best_sol[cpt_instance-1], durations, weights, deadlines);
  return inst;
 }
 

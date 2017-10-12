@@ -13,25 +13,35 @@ class Instance {
   
   int id;
   int instance_size;
+  long best_sol;
 
  public:
   Instance
   (
    int id,
    int instance_size,
+   long best_sol,
    std::vector<long> durations,
    std::vector<long> weights,
    std::vector<long> deadlines
   ):
    id(id),
    instance_size(instance_size),
+   best_sol(best_sol),
    durations(durations),
    weights(weights),
    deadlines(deadlines)
   {}
 
+  Instance():
+   id(0),
+   instance_size(0),
+   best_sol(0)
+  {}
+
   int get_id() { return id; }
   int get_instance_size() { return instance_size; }
+  long get_best_sol() { return best_sol; }
   long get_duration(int i) { return durations[i]; }
   long get_weight(int i) { return weights[i]; }
   long get_deadline(int i) { return deadlines[i]; }

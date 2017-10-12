@@ -12,7 +12,7 @@ enum class Init_Mode { RND, EDD, MDD };
 
 class SMTWTP_initializer: public SMTWTP
 {
- private:
+ protected:
   Init_Mode init;
 
  public:
@@ -29,6 +29,7 @@ class SMTWTP_initializer: public SMTWTP
   std::vector<long> MDD_solution(Instance &instance);
 
   std::vector<long> get_solution(Instance &instance) override;
+  std::string get_name() override;
 };
 
 #endif

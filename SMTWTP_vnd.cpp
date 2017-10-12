@@ -26,18 +26,20 @@ std::vector<long> SMTWTP_vnd::get_solution
     finish = true;
   }
  } while(!finish);
+
+ for (auto &v: vnd)
+  compute_cpt += v.get_compute_cpt();
   
  return best_solution;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-int SMTWTP_vnd::get_full_compute_cpt()
+std::string SMTWTP_vnd::get_name()
 ////////////////////////////////////////////////////////////////////////////
 {
- int cpt = 0;
-
- for (auto v: vnd)
-  cpt += v.get_compute_cpt();
-
- return cpt + get_compute_cpt();
+ std::string name;
+ for (auto v : vnd)
+  name += v.get_name() + '-';
+ name.pop_back();
+ return name;
 }
