@@ -164,6 +164,8 @@ int main (int argc, char *argv[])
   std::vector<std::string> filenames = {"../../instances/wt_1000_"+std::to_string(id_instance)+".txt"};
   generators.push_back(std::unique_ptr<InstanceGenerator>(new InstanceGenerator1000(filenames))); 
   inst = (*generators.back()).get_new_instance(instance_size);
+  while (inst.get_id() != id_instance)
+   inst = (*generators.back()).get_new_instance(instance_size);
  }
  else
  {
