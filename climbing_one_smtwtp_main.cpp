@@ -122,11 +122,6 @@ int main (int argc, char *argv[])
  int instance_size = std::stoi(argv[1]);
  int id_instance = std::stoi(argv[2]);
  int nb_while = 1;
- float time_inter = 0.0;
- float deviation_inter = 0.0;
- float cost_cpt_inter = 0.0;
- float found_cost_inter = 0.0;
- bool has_best_inter = false;
 
  std::vector<std::unique_ptr<SMTWTP>> problems;
 
@@ -172,8 +167,6 @@ int main (int argc, char *argv[])
   std::cerr << "Pas la bonne taille." << std::endl;
   return -1;
  }
-
- auto &generator = *generators.back();
 
  // Pour les 18 Algos possibles, on fait
  std::vector<Select_Mode> selects = {Select_Mode::FIRST,
