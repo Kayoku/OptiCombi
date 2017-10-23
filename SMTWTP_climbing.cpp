@@ -109,14 +109,14 @@ std::vector<long> SMTWTP_climbing::swap_process
  std::vector<long> new_sol;
 
  std::vector<long> order;
- for (int i = 0 ; i < solution.size() ; i++)
+ for (int i = 0 ; i < (int)solution.size() ; i++)
   order.push_back(i); 
  std::random_shuffle(order.begin(), order.end());
 
  // Pour chaque element possible
  for (auto o : order)
  {
-  for (int j = o+1 ; j < solution.size() ; j++)
+  for (int j = o+1 ; j < (int)solution.size() ; j++)
   {
    new_sol = solution;
    std::iter_swap(new_sol.begin()+o, new_sol.begin()+j);

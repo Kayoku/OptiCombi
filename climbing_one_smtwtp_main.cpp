@@ -15,6 +15,7 @@
 #include "SMTWTP_climbing.h"
 #include "SMTWTP_initializer.h"
 #include "SMTWTP_vnd.h"
+#include "SMTWTP_ILS.h"
 
 ////////////////////////////////////////////////////////////////////////////
 void usage()
@@ -46,7 +47,7 @@ void display_result
  std::string has_best
 )
 {
- std::cout << std::setw(18) << mode 
+ std::cout << std::setw(18) << mode
            << "   "
            << std::setw(14) << std::fixed << std::setprecision(2) << time
            << "   "
@@ -56,7 +57,7 @@ void display_result
            << "   "
            << std::setw(14) << found_cost
            << "   "
-           << std::setw(3) << has_best 
+           << std::setw(3) << has_best
            << std::endl;
 }
 
@@ -122,6 +123,7 @@ int main (int argc, char *argv[])
  int instance_size = std::stoi(argv[1]);
  int id_instance = std::stoi(argv[2]);
  int nb_while = 1;
+ std::cout << "Nombre de boucle: " << nb_while << std::endl;
 
  std::vector<std::unique_ptr<SMTWTP>> problems;
 
@@ -132,6 +134,11 @@ int main (int argc, char *argv[])
 
  if (instance_size == 100)
  {
+  if (id_instance < 1 || id_instance > 125)
+  {
+   std::cerr << "Pas d'instance à cette id." << std::endl;
+   return -1;
+  }
   std::string filename = "../../instances/wt100.txt";
   std::ifstream file(filename);
   if (!file.is_open())
@@ -143,21 +150,16 @@ int main (int argc, char *argv[])
   inst = (*generators.back()).get_new_instance(instance_size);
   while (inst.get_id() != id_instance)
    inst = (*generators.back()).get_new_instance(instance_size);
-  if (inst.get_id() != id_instance)
-  {
-   std::cerr << "Pas d'instance à cette id." << std::endl;
-   return -1;
-  }
- } 
+ }
  else if (instance_size == 1000)
  {
-  if (id_instance < 1 && id_instance > 25)
+  if (id_instance < 1 || id_instance > 25)
   {
    std::cerr << "Pas d'instance à cette id." << std::endl;
    return -1;
   }
   std::vector<std::string> filenames = {"../../instances/wt_1000_"+std::to_string(id_instance)+".txt"};
-  generators.push_back(std::unique_ptr<InstanceGenerator>(new InstanceGenerator1000(filenames))); 
+  generators.push_back(std::unique_ptr<InstanceGenerator>(new InstanceGenerator1000(filenames)));
   inst = (*generators.back()).get_new_instance(instance_size);
   while (inst.get_id() != id_instance)
    inst = (*generators.back()).get_new_instance(instance_size);
@@ -184,19 +186,19 @@ int main (int argc, char *argv[])
 
  /* Basic Algos */
 
- {
-  for (auto init : inits)
-   problems.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_initializer(instance_size, init)));
- }
+ for (auto init : inits)
+  problems.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_initializer(instance_size, init)));
 
  /* 18 Algos  */
 
- for (auto select : selects)
-  for (auto neighbour : neighbours)
-   for (auto init : inits)
+ if (instance_size != 1000)
+ {
+  for (auto select : selects)
+   for (auto neighbour : neighbours)
+    for (auto init : inits)
      problems.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_climbing(instance_size, select, neighbour, init)));
-
- /* VND  */ 
+ }
+ /* VND  */
 
  std::vector<std::vector<Config_VND>> configs =
  {
@@ -222,7 +224,12 @@ int main (int argc, char *argv[])
  for (auto conf : configs)
   problems.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, init, conf)));
 
+ /* ILS */
+
+ problems.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, init, configs[0], 2, 3)));
+
  // On lance les algos
+
  for (auto &p : problems)
   solve_problem(*p, inst, nb_while);
 

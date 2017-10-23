@@ -14,11 +14,11 @@ class SMTWTP_climbing : public SMTWTP_initializer
   Neighbour_Mode neighbour;
 
   std::vector<long> insert_process(std::vector<long> solution,
-                                  Instance &instance);
+                                   Instance &instance);
   std::vector<long> swap_process(std::vector<long> solution,
-                                Instance &instance);
+                                 Instance &instance);
   std::vector<long> exchange_process(std::vector<long> solution,
-                                    Instance &instance);
+                                     Instance &instance);
 
  public:
   SMTWTP_climbing(int instance_size,

@@ -30,4 +30,5 @@ add_executable(climbing_one_smtwtp_main
     ../SMTWTP_initializer.cpp
     ../SMTWTP_vnd.cpp
     ../SMTWTP_climbing.cpp
+    ../SMTWTP_ILS.cpp
 )
