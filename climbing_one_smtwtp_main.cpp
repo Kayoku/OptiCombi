@@ -16,6 +16,7 @@
 #include "SMTWTP_initializer.h"
 #include "SMTWTP_vnd.h"
 #include "SMTWTP_ILS.h"
+#include "SMTWTP_vns.h"
 
 ////////////////////////////////////////////////////////////////////////////
 void usage()
@@ -47,7 +48,7 @@ void display_result
  std::string has_best
 )
 {
- std::cout << std::setw(18) << mode
+ std::cout << std::setw(25) << mode
            << "   "
            << std::setw(14) << std::fixed << std::setprecision(2) << time
            << "   "
@@ -227,6 +228,10 @@ int main (int argc, char *argv[])
  /* ILS */
 
  problems.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, init, configs[0], 2, 3)));
+
+ /* VNS */
+
+ problems.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vns(instance_size, init, 10)));
 
  // On lance les algos
 
