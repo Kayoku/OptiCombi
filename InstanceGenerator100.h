@@ -10,6 +10,7 @@ class InstanceGenerator100: public InstanceGenerator
 {
  private:
   std::istream &file;
+  const int instance_size = 100;
 
  public:
   InstanceGenerator100(std::istream &file):
@@ -28,7 +29,7 @@ class InstanceGenerator100: public InstanceGenerator
      best_sol.push_back(inter);
    }  
 
-  Instance get_new_instance(int instance_size) override;
+  Instance get_new_instance() override;
   bool previous_good() override;
 };
 

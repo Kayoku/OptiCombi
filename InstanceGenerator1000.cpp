@@ -1,8 +1,9 @@
 #include "InstanceGenerator1000.h"
 #include <fstream>
+#include <string>
 
 ////////////////////////////////////////////////////////////////////////////
-Instance InstanceGenerator1000::get_new_instance(int instance_size)
+Instance InstanceGenerator1000::get_new_instance()
 ////////////////////////////////////////////////////////////////////////////
 {
  // Ouverture du premier fichier
@@ -13,7 +14,18 @@ Instance InstanceGenerator1000::get_new_instance(int instance_size)
   exit(-1);
  }
 
- files.erase(files.begin(), files.begin());
+ char c = files[0][files[0].size()-5];
+ std::string nb;
+ int ic = 0;
+ while (c != '_')
+ {
+  nb = c + nb;
+  ic++;
+  c = files[0][files[0].size()-5-ic];
+ }
+
+ int id_inst = std::stoi(nb);
+ files.erase(files.begin());
 
  // Création des variables utiles
  long inter;
@@ -36,7 +48,7 @@ Instance InstanceGenerator1000::get_new_instance(int instance_size)
   deadlines.push_back(inter);
  }
  
- Instance inst(cpt_instance, instance_size, best_sol[cpt_instance-1], durations, weights, deadlines);
+ Instance inst(id_inst, instance_size, best_sol[id_inst-1], durations, weights, deadlines);
  return inst;
 }
 

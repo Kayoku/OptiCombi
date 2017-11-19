@@ -11,23 +11,13 @@ include_directories(
     ../
 )
 
-add_executable(climbing_smtwtp_main
-    ../climbing_smtwtp_main.cpp
-    ../InstanceGenerator100.cpp
-    ../InstanceGenerator1000.cpp
-    ../Instance.cpp
-    ../SMTWTP.cpp
-    ../SMTWTP_initializer.cpp
-    ../SMTWTP_climbing.cpp
-)
-
-add_executable(climbing_one_smtwtp_main
-    ../climbing_one_smtwtp_main.cpp
+add_executable(oc
+    ../super_main.cpp
     ../InstanceGenerator100.cpp
     ../InstanceGenerator1000.cpp
     ../Instance.cpp
     ../SMTWTP.cpp
     ../SMTWTP_initializer.cpp
     ../SMTWTP_vnd.cpp
-    ../SMTWTP_climbing.cpp
+    ../SMTWTP_climbing.cpp   
 )

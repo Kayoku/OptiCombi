@@ -17,7 +17,7 @@ class InstanceGenerator
       cpt_instance(0)
    {}  
 
-  virtual Instance get_new_instance(int instance_size) = 0;
+  virtual Instance get_new_instance() = 0;
   virtual bool previous_good() = 0;
 };
 
