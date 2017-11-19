@@ -20,4 +20,6 @@ add_executable(oc
     ../SMTWTP_initializer.cpp
     ../SMTWTP_vnd.cpp
     ../SMTWTP_climbing.cpp   
+    ../SMTWTP_ILS.cpp
+    ../SMTWTP_vns.cpp
 )

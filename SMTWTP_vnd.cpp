@@ -1,13 +1,24 @@
 #include "SMTWTP_vnd.h"
 
 ////////////////////////////////////////////////////////////////////////////
-std::vector<long> SMTWTP_vnd::get_solution 
+std::vector<long> SMTWTP_vnd::get_solution
 ////////////////////////////////////////////////////////////////////////////
 (
  Instance &instance
 )
 {
- std::vector<long> best_solution = get_initializer(instance);
+ return do_vnd(instance, get_initializer(instance));
+}
+
+////////////////////////////////////////////////////////////////////////////
+std::vector<long> SMTWTP_vnd::do_vnd
+////////////////////////////////////////////////////////////////////////////
+(
+ Instance &instance,
+ std::vector<long> init_sol
+)
+{
+ std::vector<long> best_solution = init_sol;
  std::vector<long> new_solution;
  bool finish = true;
 

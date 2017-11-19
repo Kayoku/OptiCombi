@@ -22,7 +22,7 @@ struct Config_VND
 
 class SMTWTP_vnd : public SMTWTP_initializer
 {
- private:
+ protected:
   std::vector<SMTWTP_climbing> vnd;
 
  public:
@@ -35,6 +35,7 @@ class SMTWTP_vnd : public SMTWTP_initializer
       vnd.push_back(SMTWTP_climbing(instance_size, conf.select, conf.neighbour, init));
     }
 
+  std::vector<long> do_vnd(Instance &instance, std::vector<long> init_sol);
   std::vector<long> get_solution(Instance &instance) override;
   std::string get_name() override;
 };

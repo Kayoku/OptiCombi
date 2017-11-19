@@ -15,6 +15,8 @@
 #include "SMTWTP_climbing.h"
 #include "SMTWTP_initializer.h"
 #include "SMTWTP_vnd.h"
+#include "SMTWTP_ILS.h"
+#include "SMTWTP_vns.h"
 
 struct ErrorProxy {
  ErrorProxy(const char* file, int line)
@@ -114,7 +116,7 @@ void solve_problem
 
   time = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count();
   cost = problems.compute_cost(solution, inst);
-  deviation = (((float)cost - (float)inst.get_best_sol()) / (float)inst.get_instance_size());
+  deviation = 100 * (((float)cost - (float)inst.get_best_sol()) / (float)inst.get_best_sol());
 
   time_inter += time;
   deviation_inter += deviation;
@@ -189,6 +191,12 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
 
   for (auto conf : configs)
    algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, Init_Mode::MDD, conf))); 
+
+  if (str_algo == "all" || str_algo == "ils")
+   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, configs[0], 2, 3)));
+
+  if (str_algo == "all" || str_algo == "vns")
+   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vns(instance_size, Init_Mode::MDD, 10)));
  }
 
  return algos;
