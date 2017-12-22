@@ -95,7 +95,7 @@ void solve_problem
  int nb_while
 )
 {
- float time_inter = 0.0; 
+ float time_inter = 0.0;
  float deviation_inter = 0.0;
  float cost_cpt_inter = 0.0;
  float found_cost_inter = 0.0;
@@ -142,7 +142,7 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
  std::string str_algo
 )
 {
- std::vector<std::unique_ptr<SMTWTP>> algos; 
+ std::vector<std::unique_ptr<SMTWTP>> algos;
 
  std::vector<Select_Mode> selects = {Select_Mode::FIRST,
                                      Select_Mode::BEST};
@@ -153,7 +153,7 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
                                  Init_Mode::EDD,
                                  Init_Mode::MDD};
 
- if (str_algo == "all" || str_algo == "const")  
+ if (str_algo == "all" || str_algo == "const")
  {
   for (auto init : inits)
    algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_initializer(instance_size, init)));
@@ -190,7 +190,7 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
   };
 
   for (auto conf : configs)
-   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, Init_Mode::MDD, conf))); 
+   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, Init_Mode::MDD, conf)));
 
   if (str_algo == "all" || str_algo == "ils")
    algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, configs[0], 2, 3)));
@@ -235,7 +235,7 @@ std::vector<Instance> choice_instances
     LOG_ERROR << "No instance with id " << instance_id;
    instances.push_back(inter);
   }
- } 
+ }
  else if (instance_size == 1000)
  {
   // Récupérations de toutes les instances
