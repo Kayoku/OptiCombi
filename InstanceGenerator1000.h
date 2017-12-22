@@ -10,6 +10,7 @@ class InstanceGenerator1000 : public InstanceGenerator
 {
  private:
   std::vector<std::string> files;
+  const int instance_size = 1000;
 
  public:
   InstanceGenerator1000(std::vector<std::string> files):
@@ -28,7 +29,7 @@ class InstanceGenerator1000 : public InstanceGenerator
      best_sol.push_back(inter);
    }  
 
-  Instance get_new_instance(int instance_size) override;
+  Instance get_new_instance() override;
   bool previous_good() override;
 };
 
