@@ -38,9 +38,5 @@ std::vector<long> SMTWTP_vns::get_solution
 std::string SMTWTP_vns::get_name()
 ////////////////////////////////////////////////////////////////////////////
 {
- std::string name = "VNS-";
- for (auto v : vns)
-  name += v.get_name() + '-';
- name.pop_back();
- return name;
+ return "VNS";
 }

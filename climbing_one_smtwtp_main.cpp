@@ -123,7 +123,7 @@ int main (int argc, char *argv[])
 
  int instance_size = std::stoi(argv[1]);
  int id_instance = std::stoi(argv[2]);
- int nb_while = 1;
+ int nb_while = 10;
  std::cout << "Nombre de boucle: " << nb_while << std::endl;
 
  std::vector<std::unique_ptr<SMTWTP>> problems;

@@ -13,6 +13,7 @@ std::vector<long> SMTWTP_ILS::get_solution
  std::vector<long> best_solution = get_initializer(instance);
  std::vector<long> pertub_solution = best_solution;
  std::vector<long> new_solution;
+ int compute_best_sol = compute_cost(best_solution, instance);
  int cpt_better_sol = 0;
  int intensity = perturbation_intensity;
 
@@ -23,11 +24,12 @@ std::vector<long> SMTWTP_ILS::get_solution
    // Local search
  
    new_solution = do_vnd(instance, pertub_solution);
-   if (compute_cost(new_solution, instance) <
-       compute_cost(best_solution, instance))
+   int compute_new_sol = compute_cost(new_solution, instance);
+   if (compute_new_sol < compute_best_sol)
    {
     cpt_better_sol = 0;
     best_solution = new_solution;
+    compute_best_sol = compute_new_sol;
    }
    else
     cpt_better_sol++;
