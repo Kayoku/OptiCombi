@@ -18,6 +18,20 @@
 #include "SMTWTP_ILS.h"
 #include "SMTWTP_vns.h"
 
+/*
+id instance :
+ - Nom test 1 (temps)
+  - mode 1 (rnd)
+   - valeur
+  - mode 2 (edd)
+   - valeur
+ - ...
+
+std::map<std::string
+*/
+
+std::map<std::string, std::array<float, 4>> values;
+
 struct ErrorProxy {
  ErrorProxy(const char* file, int line)
  {}
@@ -61,9 +75,9 @@ void display_result
  std::string has_best
 )
 {
- std::cout << std::setw(18) << mode
+ std::cout << std::setw(20) << mode
            << "   "
-           << std::setw(14) << std::fixed << std::setprecision(2) << time
+           << std::setw(14) << time
            << "   "
            << std::setw(14) << deviation
            << "   "
@@ -71,7 +85,7 @@ void display_result
            << "   "
            << std::setw(14) << found_cost
            << "   "
-           << std::setw(3) << has_best
+           << std::setw(4) << has_best
            << std::endl;
 }
 
@@ -99,7 +113,7 @@ void solve_problem
  float deviation_inter = 0.0;
  float cost_cpt_inter = 0.0;
  float found_cost_inter = 0.0;
- bool has_best_inter = false;
+ float has_best_inter = 0.0;
 
  for (int i = 0 ; i < nb_while ; i++)
  {
@@ -120,18 +134,23 @@ void solve_problem
 
   time_inter += time;
   deviation_inter += deviation;
-  cost_cpt_inter += problems.get_compute_cpt();
+  cost_cpt_inter += problems.get_compute_cpt() - cost_cpt_inter;
   found_cost_inter += cost;
   if (deviation == 0)
-   has_best_inter = true;
+   has_best_inter += 1;
  }
+
+ values[problems.get_name()][0] += time_inter/nb_while;
+ values[problems.get_name()][1] += deviation_inter/nb_while;
+ values[problems.get_name()][2] += cost_cpt_inter/nb_while;
+ values[problems.get_name()][3] += has_best_inter / nb_while * 100;
 
  display_result(problems.get_name(),
                 float_to_string(time_inter/nb_while),
                 float_to_string(deviation_inter/nb_while),
                 float_to_string(cost_cpt_inter/nb_while),
                 float_to_string(found_cost_inter/nb_while),
-                std::string((has_best_inter) ? "Y" : "N"));
+                float_to_string(has_best_inter/nb_while * 100));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -167,37 +186,35 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
      algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_climbing(instance_size, select, neighbour, init)));
  }
 
- if (str_algo == "all" || str_algo == "vnd")
+ std::vector<std::vector<Config_VND>> configs =
  {
-  std::vector<std::vector<Config_VND>> configs =
   {
-   {
-    Config_VND(Select_Mode::FIRST,
-               Neighbour_Mode::EXCHANGE),
-    Config_VND(Select_Mode::FIRST,
-               Neighbour_Mode::SWAP),
-    Config_VND(Select_Mode::FIRST,
-               Neighbour_Mode::INSERT)
-   },
-   {
-    Config_VND(Select_Mode::FIRST,
-               Neighbour_Mode::EXCHANGE),
-    Config_VND(Select_Mode::FIRST,
-               Neighbour_Mode::INSERT),
-    Config_VND(Select_Mode::FIRST,
-               Neighbour_Mode::SWAP)
-   }
-  };
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::EXCHANGE),
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::SWAP),
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::INSERT)
+  },
+  {
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::EXCHANGE),
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::INSERT),
+   Config_VND(Select_Mode::FIRST,
+              Neighbour_Mode::SWAP)
+  }
+ };
 
+ if (str_algo == "all" || str_algo == "vnd")
   for (auto conf : configs)
    algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, Init_Mode::MDD, conf)));
 
-  if (str_algo == "all" || str_algo == "ils")
-   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, configs[0], 2, 3)));
+ if (str_algo == "all" || str_algo == "ils")
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, configs[0], 2, 3)));
 
-  if (str_algo == "all" || str_algo == "vns")
-   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vns(instance_size, Init_Mode::MDD, 10)));
- }
+ if (str_algo == "all" || str_algo == "vns")
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vns(instance_size, Init_Mode::MDD, 10)));
 
  return algos;
 }
@@ -292,13 +309,29 @@ int main(int argc, char* argv[])
  auto algos = choice_algos(instance_size, str_algo);
 
  // Lancement des algos
+ int cpt_inst = 0;
  for (auto &inst : instances)
  {
+  cpt_inst++;
   std::cout << "id: " << inst.get_id() << std::endl;
   std::cout << "best result: " << inst.get_best_sol() << std::endl;
   display_result("Mode", "Time (us)", "Deviation", "Cost cpt", "Found cost", "Best");
   for (auto &algo : algos)
    solve_problem(*algo, inst, nb_while);
+ }
+
+ // On divise par le nb d'instance
+ for (auto v : values)
+  for (int i = 0 ; i < 4 ; i++)
+   values[v.first][i] /= cpt_inst;
+
+ // On affiche
+ for (auto v : values)
+ {
+  std::cout << v.first << ": " << values[v.first][0] << " "
+                               << values[v.first][1] << " "
+                               << values[v.first][2] << " "
+                               << values[v.first][3] << std::endl;
  }
 
  return 0;
