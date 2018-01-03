@@ -25,12 +25,12 @@ class Instance {
    std::vector<long> weights,
    std::vector<long> deadlines
   ):
-   id(id),
-   instance_size(instance_size),
-   best_sol(best_sol),
    durations(durations),
    weights(weights),
-   deadlines(deadlines)
+   deadlines(deadlines),
+   id(id),
+   instance_size(instance_size),
+   best_sol(best_sol)
   {}
 
   Instance():

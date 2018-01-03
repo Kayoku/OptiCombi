@@ -20,6 +20,7 @@ class SMTWTP
 
   int get_instance_size() { return instance_size; }
   int get_compute_cpt();
+  void reset_compute_cpt() { compute_cpt = 0; }
 
   long compute_cost (std::vector<long> &solution,
                     Instance &instance);

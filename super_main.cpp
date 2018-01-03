@@ -18,16 +18,14 @@
 #include "SMTWTP_ILS.h"
 #include "SMTWTP_vns.h"
 
-/*
-id instance :
- - Nom test 1 (temps)
-  - mode 1 (rnd)
-   - valeur
-  - mode 2 (edd)
-   - valeur
- - ...
 
-std::map<std::string
+/*
+  Nom de l'algo1
+    Temps
+    Deviation
+    Cost
+    Taux de bon résultat
+  Nom de l'algo2
 */
 
 std::map<std::string, std::array<float, 4>> values;
@@ -130,7 +128,7 @@ void solve_problem
 
   time = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count();
   cost = problems.compute_cost(solution, inst);
-  deviation = 100 * (((float)cost - (float)inst.get_best_sol()) / (float)inst.get_best_sol());
+  deviation = 100 * ((((float)cost+1) - ((float)inst.get_best_sol())+1) / ((float)inst.get_best_sol()+1));
 
   time_inter += time;
   deviation_inter += deviation;
@@ -140,10 +138,12 @@ void solve_problem
    has_best_inter += 1;
  }
 
+ problems.reset_compute_cpt();
+
  values[problems.get_name()][0] += time_inter/nb_while;
  values[problems.get_name()][1] += deviation_inter/nb_while;
  values[problems.get_name()][2] += cost_cpt_inter/nb_while;
- values[problems.get_name()][3] += has_best_inter / nb_while * 100;
+ values[problems.get_name()][3] += has_best_inter/nb_while * 100;
 
  display_result(problems.get_name(),
                 float_to_string(time_inter/nb_while),
@@ -325,13 +325,16 @@ int main(int argc, char* argv[])
   for (int i = 0 ; i < 4 ; i++)
    values[v.first][i] /= cpt_inst;
 
- // On affiche
+ // On écrit 
+ std::ofstream csv_file("test.csv");
+ csv_file << ",Temps,Deviation,Cost,Taux" << std::endl;
  for (auto v : values)
  {
-  std::cout << v.first << ": " << values[v.first][0] << " "
-                               << values[v.first][1] << " "
-                               << values[v.first][2] << " "
-                               << values[v.first][3] << std::endl;
+  csv_file << v.first << ","
+           << values[v.first][0] << ","
+           << values[v.first][1] << ","
+           << values[v.first][2] << ","
+           << values[v.first][3] << std::endl;
  }
 
  return 0;
