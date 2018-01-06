@@ -8,31 +8,39 @@
 #include "SMTWTP_climbing.h"
 #include "Instance.h"
 
-struct Config_VND
-{
- Select_Mode select;
- Neighbour_Mode neighbour;
-
- Config_VND(Select_Mode select,
-            Neighbour_Mode neighbour):
-  select(select),
-  neighbour(neighbour)
- {}
-};
-
 class SMTWTP_vnd : public SMTWTP_initializer
 {
  protected:
   std::vector<SMTWTP_climbing> vnd;
+  bool random;
+  int depth;
 
  public:
   SMTWTP_vnd(int instance_size,
              Init_Mode init,
-             std::vector<Config_VND> confs):
-     SMTWTP_initializer(instance_size, init)
+             int depth):
+   SMTWTP_initializer(instance_size, init),
+   random(true),
+   depth(depth)
+   {
+    vnd.push_back(SMTWTP_climbing(instance_size, Select_Mode::FIRST, Neighbour_Mode::EXCHANGE, init, depth));
+    vnd.push_back(SMTWTP_climbing(instance_size, Select_Mode::FIRST, Neighbour_Mode::INSERT, init, depth));
+    vnd.push_back(SMTWTP_climbing(instance_size, Select_Mode::FIRST, Neighbour_Mode::SWAP, init, depth));
+    vnd.push_back(SMTWTP_climbing(instance_size, Select_Mode::BEST, Neighbour_Mode::SWAP, init, depth));
+    vnd.push_back(SMTWTP_climbing(instance_size, Select_Mode::BEST, Neighbour_Mode::INSERT, init, depth));
+    vnd.push_back(SMTWTP_climbing(instance_size, Select_Mode::BEST, Neighbour_Mode::EXCHANGE, init, depth));
+   }
+
+  SMTWTP_vnd(int instance_size,
+             Init_Mode init,
+             Select_Mode select,
+             std::vector<Neighbour_Mode> neighbours):
+     SMTWTP_initializer(instance_size, init),
+     random(false),
+     depth(1)
     {
-     for(auto conf : confs)
-      vnd.push_back(SMTWTP_climbing(instance_size, conf.select, conf.neighbour, init));
+     for(auto neighbour : neighbours)
+      vnd.push_back(SMTWTP_climbing(instance_size, select, neighbour, init));
     }
 
   std::vector<long> do_vnd(Instance &instance, std::vector<long> init_sol);

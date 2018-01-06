@@ -94,7 +94,7 @@ void usage()
  std::cerr << "usage: ./oc <instance> <id> <algos> <iterations>" << std::endl;
  std::cerr << "- instance   : 100 or 1000." << std::endl;
  std::cerr << "- id         : all for all, id (number) for just one instance." << std::endl;
- std::cerr << "- algos      : all/const/climbing/vnd/ILS/VNS/GA." << std::endl;
+ std::cerr << "- algos      : all/const/climbing/vnd/vnd-plus/ILS/VNS/GA." << std::endl;
  std::cerr << "- iterations : nb of iterations (> 1)." << std::endl;
 }
 
@@ -134,7 +134,7 @@ void solve_problem
   deviation_inter += deviation;
   cost_cpt_inter += problems.get_compute_cpt() - cost_cpt_inter;
   found_cost_inter += cost;
-  if (deviation == 0)
+  if (inst.get_best_sol() == cost)
    has_best_inter += 1;
  }
 
@@ -186,32 +186,32 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
      algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_climbing(instance_size, select, neighbour, init)));
  }
 
- std::vector<std::vector<Config_VND>> configs =
+ std::vector<std::vector<Neighbour_Mode>> configs =
  {
   {
-   Config_VND(Select_Mode::FIRST,
-              Neighbour_Mode::EXCHANGE),
-   Config_VND(Select_Mode::FIRST,
-              Neighbour_Mode::SWAP),
-   Config_VND(Select_Mode::FIRST,
-              Neighbour_Mode::INSERT)
+   Neighbour_Mode::EXCHANGE,
+   Neighbour_Mode::SWAP,
+   Neighbour_Mode::INSERT
   },
   {
-   Config_VND(Select_Mode::FIRST,
-              Neighbour_Mode::EXCHANGE),
-   Config_VND(Select_Mode::FIRST,
-              Neighbour_Mode::INSERT),
-   Config_VND(Select_Mode::FIRST,
-              Neighbour_Mode::SWAP)
+   Neighbour_Mode::EXCHANGE,
+   Neighbour_Mode::INSERT,
+   Neighbour_Mode::SWAP
   }
  };
 
  if (str_algo == "all" || str_algo == "vnd")
-  for (auto conf : configs)
-   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, Init_Mode::MDD, conf)));
+  for (auto init : inits)
+   for (auto select : selects)
+    for (auto conf : configs)
+     algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, init, select, conf)));
 
- if (str_algo == "all" || str_algo == "ils")
-  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, configs[0], 2, 3)));
+ if (str_algo == "all" || str_algo == "vnd-plus")
+  for (auto init : inits)
+   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, init, 1)));
+
+ //if (str_algo == "all" || str_algo == "ils")
+ // algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, configs[0], 2, 3)));
 
  if (str_algo == "all" || str_algo == "vns")
   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vns(instance_size, Init_Mode::MDD, 10)));

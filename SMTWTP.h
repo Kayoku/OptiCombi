@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <array>
 
 #include "Instance.h"
 
@@ -10,7 +11,7 @@ class SMTWTP
 {
  protected:
   int instance_size;
-  int compute_cpt;
+  unsigned long long int compute_cpt;
 
  public:
   SMTWTP(int instance_size):

@@ -16,10 +16,10 @@ class SMTWTP_ILS : public SMTWTP_vnd
  public:
   SMTWTP_ILS(int instance_size,
              Init_Mode init,
-             std::vector<Config_VND> confs,
+             std::vector<Neighbour_Mode> confs,
              int intensity,
              int amplification):
-     SMTWTP_vnd(instance_size, init, confs),
+     SMTWTP_vnd(instance_size, init, Select_Mode::FIRST, confs),
      perturbation_intensity(intensity),
      amplification(amplification)
     {}
