@@ -3,10 +3,11 @@
 #include <sstream>
 #include <fstream>
 #include <chrono>
-#include <math.h>
+#include <cmath>
 #include <iomanip>
 #include <map>
 #include <memory>
+#include <algorithm>
 
 #include "Instance.h"
 #include "InstanceGenerator100.h"
@@ -16,7 +17,7 @@
 #include "SMTWTP_initializer.h"
 #include "SMTWTP_vnd.h"
 #include "SMTWTP_ILS.h"
-#include "SMTWTP_vns.h"
+#include "SMTWTP_population.h"
 
 
 /*
@@ -28,7 +29,7 @@
   Nom de l'algo2
 */
 
-std::map<std::string, std::array<float, 4>> values;
+std::map<std::string, std::array<float, 5>> values;
 
 struct ErrorProxy {
  ErrorProxy(const char* file, int line)
@@ -88,6 +89,14 @@ void display_result
 }
 
 ////////////////////////////////////////////////////////////////////////////
+void init_values(std::string name)
+////////////////////////////////////////////////////////////////////////////
+{
+ for (int i = 0 ; i < 5 ; i++)
+  values[name][i] = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////
 void usage()
 ////////////////////////////////////////////////////////////////////////////
 {
@@ -128,7 +137,7 @@ void solve_problem
 
   time = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count();
   cost = problems.compute_cost(solution, inst);
-  deviation = 100 * ((((float)cost+1) - ((float)inst.get_best_sol())+1) / ((float)inst.get_best_sol()+1));
+  deviation = 100 * ((((float)cost) - ((float)inst.get_best_sol())) / (std::max<float>(1, inst.get_best_sol())));
 
   time_inter += time;
   deviation_inter += deviation;
@@ -143,7 +152,12 @@ void solve_problem
  values[problems.get_name()][0] += time_inter/nb_while;
  values[problems.get_name()][1] += deviation_inter/nb_while;
  values[problems.get_name()][2] += cost_cpt_inter/nb_while;
- values[problems.get_name()][3] += has_best_inter/nb_while * 100;
+
+ if (has_best_inter > 0)
+ {
+  values[problems.get_name()][3] += (float)has_best_inter/(float)nb_while * 100.0;
+  values[problems.get_name()][4]++;
+ }
 
  display_result(problems.get_name(),
                 float_to_string(time_inter/nb_while),
@@ -210,11 +224,19 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
   for (auto init : inits)
    algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vnd(instance_size, init, 1)));
 
- //if (str_algo == "all" || str_algo == "ils")
- // algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, configs[0], 2, 3)));
+ if (str_algo == "all" || str_algo == "ILS")
+ {
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, Select_Mode::FIRST, configs[0], 2, 2, 10)));
+ }
 
- if (str_algo == "all" || str_algo == "vns")
-  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_vns(instance_size, Init_Mode::MDD, 10)));
+ if (str_algo == "all" || str_algo == "GA")
+ {
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 100, 3000, 100, 1)));
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 300, 3000, 100, 1)));
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 100, 30000, 100, 1)));
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 100, 3000, 500, 1)));
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 100, 3000, 100, 8)));
+ }
 
  return algos;
 }
@@ -310,6 +332,9 @@ int main(int argc, char* argv[])
 
  // Lancement des algos
  int cpt_inst = 0;
+ for (auto &algo : algos)
+  init_values(algo->get_name());
+
  for (auto &inst : instances)
  {
   cpt_inst++;
@@ -322,19 +347,23 @@ int main(int argc, char* argv[])
 
  // On divise par le nb d'instance
  for (auto v : values)
-  for (int i = 0 ; i < 4 ; i++)
+ {
+  for (int i = 0 ; i < 3 ; i++)
    values[v.first][i] /= cpt_inst;
+  values[v.first][3] /= std::max<float>(1, values[v.first][4]);
+ }
 
  // On écrit 
  std::ofstream csv_file("test.csv");
- csv_file << ",Temps,Deviation,Cost,Taux" << std::endl;
+ csv_file << ",Temps,Deviation,Cost,Taux,Trouve" << std::endl;
  for (auto v : values)
  {
   csv_file << v.first << ","
            << values[v.first][0] << ","
            << values[v.first][1] << ","
            << values[v.first][2] << ","
-           << values[v.first][3] << std::endl;
+           << values[v.first][3] << ","
+           << values[v.first][4] << std::endl;
  }
 
  return 0;

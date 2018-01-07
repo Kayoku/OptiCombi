@@ -22,4 +22,5 @@ add_executable(oc
     ../SMTWTP_climbing.cpp
     ../SMTWTP_ILS.cpp
     ../SMTWTP_vns.cpp
+    ../SMTWTP_population.cpp
 )

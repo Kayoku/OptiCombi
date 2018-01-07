@@ -102,7 +102,7 @@ std::vector<long> SMTWTP_climbing::insert_process
  for (int i = 0 ; i < max ; i++)
   order.push_back(i); 
  std::random_shuffle(order.begin(), order.end());
- 
+
  for (auto o : order)
  {
   auto indexs = help_index(best_solution.size(), depth, o);

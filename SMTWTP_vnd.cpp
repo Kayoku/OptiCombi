@@ -34,7 +34,7 @@ std::vector<long> SMTWTP_vnd::do_vnd
  {
   do
   {
-   for (int i = 0 ; i < 5 ; i++)
+   for (int i = 0 ; i < (int)vnd.size() ; i++)
    {
     auto &algo = vnd[g()%vnd.size()];
     new_solution = algo.get_process(best_solution, instance);
