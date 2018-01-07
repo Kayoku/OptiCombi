@@ -32,7 +32,6 @@ std::vector<long> SMTWTP_ILS::get_solution
   do
   {
    // Local search
- 
    new_solution = do_vnd(instance, pertub_solution);
    if (new_solution != pertub_solution)
    {
@@ -41,7 +40,6 @@ std::vector<long> SMTWTP_ILS::get_solution
    }
  
    // Perturbation
- 
    pertub_solution = best_solution;
    int id1 = 0, id2 = 0; 
    for (int j = 0 ; j < intensity ; j++)
