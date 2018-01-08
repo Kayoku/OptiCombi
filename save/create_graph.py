@@ -69,6 +69,7 @@ rect5 = ax5.bar(x, find, width = barWidth, color=rgba, linewidth = 1)
 ax5.set_title(fields_names[4])
 ax5.set_ylim((0, 130))
 
+"""
 plt.setp(ax1.get_xticklabels(), rotation=45)
 plt.setp(ax2.get_xticklabels(), rotation=45)
 plt.setp(ax3.get_xticklabels(), rotation=45)
@@ -80,6 +81,7 @@ plt.setp(ax2.get_xticklabels(), ha='right')
 plt.setp(ax3.get_xticklabels(), ha='right')
 plt.setp(ax4.get_xticklabels(), ha='right')
 plt.setp(ax5.get_xticklabels(), ha='right')
+"""
 
 def autolabels(rects, ax):
   for rect in rects:
