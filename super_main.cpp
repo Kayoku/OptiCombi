@@ -226,19 +226,20 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
 
  if (str_algo == "all" || str_algo == "ILS")
  {
-  for (auto intens : {2, 4})
-   for (auto amp : {2, 4})
-    for (auto select : selects)
-     algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, select, configs[1], intens, amp, 3)));
+  for (auto swap : {true, false})
+  {
+   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, Select_Mode::FIRST, configs[1], 5, 30, swap)));
+   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, 5, 30, swap)));
+  }
  }
 
  if (str_algo == "all" || str_algo == "GA")
  {
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 10, 1000, 50, 1)));
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 100, 1000, 50, 1)));
   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 10, 10000, 50, 1)));
-  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 50, 10000, 50, 1)));
-  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 10, 20000, 50, 1)));
-  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 10, 10000, 100, 1)));
-  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 10, 10000, 50, 2)));
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 10, 1000, 300, 1)));
+  algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_population(instance_size, 10, 1000, 50, 4)));
  }
 
  return algos;

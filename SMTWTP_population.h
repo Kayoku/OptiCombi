@@ -43,6 +43,7 @@ class SMTWTP_population : public SMTWTP_initializer
   Population elitist(Population parents,
                      Population childs);
   std::vector<long> swap_mutation(std::vector<long> parent);
+  std::vector<long> insert_mutation(std::vector<long> parent);
   std::vector<long> get_solution(Instance &instance) override;
   std::string get_name() override;
 };

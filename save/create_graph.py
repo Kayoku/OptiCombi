@@ -9,7 +9,7 @@ import sys
 
 cmap = plt.get_cmap('tab20')
 rgba = [cmap(x) for x in np.arange(0, 1, 0.05)]
-fields_names = ["Temps en millisecondes", "Déviation moyenne", "Nombre de calcul du coût moyen", "Fiabilité", "Nombre de problèmes résolus"]
+fields_names = ["Temps moyens en millisecondes", "Déviations moyennes", "Nombre de calculs du coût moyens", "Fiabilité", "Nombre de problèmes résolus"]
 res = {}
 order = []
 
@@ -39,7 +39,7 @@ find = [np.int(float(res[v][4])) for v in order]
 x = range(len(temps))
 
 # Création des graphiques
-fig = plt.figure(figsize=(13, 13))
+fig = plt.figure(figsize=(12, 12))
 gs = gridpsec.GridSpec(3, 2)
 
 ax1 = plt.subplot(gs[0])
@@ -50,7 +50,7 @@ ax5 = plt.subplot(gs[2, :])
 
 print(len([i for i in range(len(temps))]))
 print(len([v for v in order]))
-plt.setp((ax1, ax2, ax3, ax4, ax5), xticks=[i for i in range(len(temps))], xticklabels=[v for v in order])
+plt.setp((ax5), xticks=[i for i in range(len(temps))], xticklabels=[v for v in order])
 
 rect1 = ax1.bar(x, temps, width = barWidth, color=rgba, linewidth = 1)
 ax1.set_title(fields_names[0])

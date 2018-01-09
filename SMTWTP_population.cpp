@@ -10,7 +10,6 @@ std::vector<long> SMTWTP_population::get_solution
 )
 {
  int cpt_generation = 0;
- long best = 100000000;
 
  // Initialisation des populations
  std::vector<std::vector<long>> sols;
@@ -35,7 +34,7 @@ std::vector<long> SMTWTP_population::get_solution
    int parent1 = g()%populations.size();
    int parent2 = g()%populations.size();
    while (parent1 == parent2)
-    parent2 = g()%populations.size();
+    parent2 = (g()+1)%populations.size();
  
    auto new_child = order_crossover(populations[parent1].first, populations[parent2].first);
    childs.push_back(Person(new_child, compute_cost(new_child, instance)));
@@ -45,7 +44,7 @@ std::vector<long> SMTWTP_population::get_solution
   for (int i = 0 ; i < rate_mutation ; i++) 
   {
    int parent = g()%populations.size();
-   auto new_mutant = swap_mutation(populations[parent].first);
+   auto new_mutant = insert_mutation(populations[parent].first);
    childs.push_back(Person(new_mutant, compute_cost(new_mutant, instance))); 
   }
   
@@ -95,11 +94,33 @@ std::vector<long> SMTWTP_population::swap_mutation
   int id1 = g()%size;
   int id2 = g()%size;
   while (id1 == id2)
-   id2 = g()%size;
+   id2 = (g()+1)%size;
 
   std::iter_swap(parent.begin()+id1, parent.begin()+id2);
  }
 
+ return parent;
+}
+
+////////////////////////////////////////////////////////////////////////////
+std::vector<long> SMTWTP_population::insert_mutation
+////////////////////////////////////////////////////////////////////////////
+(
+ std::vector<long> parent
+)
+{
+ int id1, id2;
+ long erased_value;
+ for (int i = 0 ; i < (int)(g()%intensity_mutation)+1 ; i++)
+ {
+  id1 = g()%parent.size();
+  id2 = g()%(parent.size()-1);
+  while (id2 == id1)
+   id2 = (g()+1)%(parent.size()-1);
+  erased_value = parent[id1];
+  parent.erase(parent.begin()+id1);
+  parent.insert(parent.begin()+id2, erased_value);
+ }
  return parent;
 }
 
