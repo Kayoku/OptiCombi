@@ -93,7 +93,8 @@ std::string SMTWTP_ILS::get_name()
 ////////////////////////////////////////////////////////////////////////////
 {
  std::string name = "ILS-s" + std::to_string(seconds) + "-i" + 
-                    std::to_string(intensity); 
+                    std::to_string(intensity) + 
+                    (swap ? "-s" : "-i"); 
  for (auto v : vnd)
  {
   auto vname = v.get_name();

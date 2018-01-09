@@ -1,3 +1,5 @@
 ,Temps,Deviation,Cost,Taux,Trouve
 ILS-s30-i5fe-fi-fs-insert,6.00146e+07,0.748539,227626,100,109
 ILS-s30-i5fe-fi-fs-bs-bi-be-insert,6.00167e+07,2.00336,266886,100,98
+ILS-s30-i5fe-fi-fs-swap,3.00075e+07,0.461468,126433,100,56
+ILS-s30-i5fe-fi-fs-bs-bi-be-swap,3.00096e+07,3.01543,143898,100,44
