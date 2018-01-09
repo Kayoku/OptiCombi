@@ -229,7 +229,7 @@ std::vector<std::unique_ptr<SMTWTP>> choice_algos
   for (auto swap : {true, false})
   {
    algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, Select_Mode::FIRST, configs[1], 5, 30, swap)));
-   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::MDD, 5, 30, swap)));
+   algos.push_back(std::unique_ptr<SMTWTP>(new SMTWTP_ILS(instance_size, Init_Mode::EDD, Select_Mode::BEST, configs[1], 5, 30, swap)));
   }
  }
 
