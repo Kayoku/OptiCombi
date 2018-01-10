@@ -50,6 +50,7 @@ ax5 = plt.subplot(gs[2, :])
 
 print(len([i for i in range(len(temps))]))
 print(len([v for v in order]))
+plt.setp((ax1, ax2, ax3, ax4), xticks=[i for i in range(len(temps))], xticklabels=["" for _ in order])
 plt.setp((ax5), xticks=[i for i in range(len(temps))], xticklabels=[v for v in order])
 
 rect1 = ax1.bar(x, temps, width = barWidth, color=rgba, linewidth = 1)
@@ -69,7 +70,6 @@ rect5 = ax5.bar(x, find, width = barWidth, color=rgba, linewidth = 1)
 ax5.set_title(fields_names[4])
 ax5.set_ylim((0, 130))
 
-"""
 plt.setp(ax1.get_xticklabels(), rotation=45)
 plt.setp(ax2.get_xticklabels(), rotation=45)
 plt.setp(ax3.get_xticklabels(), rotation=45)
@@ -81,7 +81,6 @@ plt.setp(ax2.get_xticklabels(), ha='right')
 plt.setp(ax3.get_xticklabels(), ha='right')
 plt.setp(ax4.get_xticklabels(), ha='right')
 plt.setp(ax5.get_xticklabels(), ha='right')
-"""
 
 def autolabels(rects, ax):
   for rect in rects:
